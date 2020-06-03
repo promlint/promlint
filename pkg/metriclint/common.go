@@ -235,12 +235,21 @@ func lintNoMetricTypeInName(name string) (issues []string) {
 	return issues
 }
 
+func lintReservedChars(name string) (issues []string) {
+	if strings.Contains(name, ":") {
+		issues = append(issues, "metric names should not contain ':'")
+	}
+
+	return issues
+}
+
 func commonLint(opts interface{}) (issues []string) {
 	switch opts.(type) {
 	case prometheus.CounterOpts:
 		counterOpts := opts.(prometheus.CounterOpts)
 		issues = append(issues, lintHelp(counterOpts.Help)...)
 		issues = append(issues, lintNoMetricTypeInName(counterOpts.Name)...)
+		issues = append(issues, lintReservedChars(counterOpts.Name)...)
 		issues = append(issues, lintMetricUnit(counterOpts.Name)...)
 		issues = append(issues, lintNonHistogramNoBucket(counterOpts.Name)...)
 		issues = append(issues, lintNonHistogramSummaryNoCount(counterOpts.Name)...)
@@ -251,6 +260,7 @@ func commonLint(opts interface{}) (issues []string) {
 		gaugeOpts := opts.(prometheus.GaugeOpts)
 		issues = append(issues, lintHelp(gaugeOpts.Help)...)
 		issues = append(issues, lintNoMetricTypeInName(gaugeOpts.Name)...)
+		issues = append(issues, lintReservedChars(gaugeOpts.Name)...)
 		issues = append(issues, lintMetricUnit(gaugeOpts.Name)...)
 		issues = append(issues, lintNonHistogramNoBucket(gaugeOpts.Name)...)
 		issues = append(issues, lintNonHistogramSummaryNoCount(gaugeOpts.Name)...)
@@ -261,12 +271,14 @@ func commonLint(opts interface{}) (issues []string) {
 		histogramOpts := opts.(prometheus.HistogramOpts)
 		issues = append(issues, lintHelp(histogramOpts.Help)...)
 		issues = append(issues, lintNoMetricTypeInName(histogramOpts.Name)...)
+		issues = append(issues, lintReservedChars(histogramOpts.Name)...)
 		issues = append(issues, lintMetricUnit(histogramOpts.Name)...)
 		issues = append(issues, lintNonSummaryNoLabelQuantile(histogramOpts.ConstLabels, nil)...)
 	case prometheus.SummaryOpts:
 		summaryOpts := opts.(prometheus.SummaryOpts)
 		issues = append(issues, lintHelp(summaryOpts.Help)...)
 		issues = append(issues, lintNoMetricTypeInName(summaryOpts.Name)...)
+		issues = append(issues, lintReservedChars(summaryOpts.Name)...)
 		issues = append(issues, lintMetricUnit(summaryOpts.Name)...)
 		issues = append(issues, lintNonHistogramNoBucket(summaryOpts.Name)...)
 		issues = append(issues, lintNonHistogramNoLabelLe(summaryOpts.ConstLabels, nil)...)
