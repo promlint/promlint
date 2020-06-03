@@ -103,6 +103,10 @@ var (
 	}
 )
 
+const (
+	NameSuffixSum = "_sum"
+)
+
 func lintHelp(help string) (issues []string) {
 	if len(help) == 0 {
 		issues = append(issues, "no help text")
@@ -152,11 +156,36 @@ func lintMetricUnit(name string) (issues []string) {
 	return issues
 }
 
-func CommonLint(opts prometheus.Opts) (issues []string) {
-	issues = append(issues, lintHelp(opts.Help)...)
-	issues = append(issues, lintMetricUnit(opts.Name)...)
+func hasBucketSuffix(name string) bool{
+	return strings.HasSuffix(name, "_bucket")
+}
 
-	return
+func lintNonHistogramNoBucket(name string) (issues []string) {
+	if hasBucketSuffix(name) {
+		issues = append(issues, `non-histogram metrics should not have "_bucket" suffix`)
+	}
+
+	return issues
+}
+
+func hasCountSuffix(name string) bool {
+	return strings.HasSuffix(name, "_count")
+}
+
+func lintNonHistogramSummaryNoCount(name string) (issues []string) {
+	if hasCountSuffix(name) {
+		issues = append(issues, `non-histogram and non-summary metrics should not have "_count" suffix`)
+	}
+
+	return issues
+}
+
+func lintNonHistogramSummaryNoSum(name string) (issues []string) {
+	if strings.HasSuffix(name, NameSuffixSum) {
+		issues = append(issues, `non-histogram and non-summary metrics should not have "_sum" suffix`)
+	}
+
+	return issues
 }
 
 func commonLint(opts interface{}) (issues []string) {
@@ -165,10 +194,16 @@ func commonLint(opts interface{}) (issues []string) {
 		counterOpts := opts.(prometheus.CounterOpts)
 		issues = append(issues, lintHelp(counterOpts.Help)...)
 		issues = append(issues, lintMetricUnit(counterOpts.Name)...)
+		issues = append(issues, lintNonHistogramNoBucket(counterOpts.Name)...)
+		issues = append(issues, lintNonHistogramSummaryNoCount(counterOpts.Name)...)
+		issues = append(issues, lintNonHistogramSummaryNoSum(counterOpts.Name)...)
 	case prometheus.GaugeOpts:
 		gaugeOpts := opts.(prometheus.GaugeOpts)
 		issues = append(issues, lintHelp(gaugeOpts.Help)...)
 		issues = append(issues, lintMetricUnit(gaugeOpts.Name)...)
+		issues = append(issues, lintNonHistogramNoBucket(gaugeOpts.Name)...)
+		issues = append(issues, lintNonHistogramSummaryNoCount(gaugeOpts.Name)...)
+		issues = append(issues, lintNonHistogramSummaryNoSum(gaugeOpts.Name)...)
 	case prometheus.HistogramOpts:
 		histogramOpts := opts.(prometheus.HistogramOpts)
 		issues = append(issues, lintHelp(histogramOpts.Help)...)
@@ -177,6 +212,7 @@ func commonLint(opts interface{}) (issues []string) {
 		summaryOpts := opts.(prometheus.SummaryOpts)
 		issues = append(issues, lintHelp(summaryOpts.Help)...)
 		issues = append(issues, lintMetricUnit(summaryOpts.Name)...)
+		issues = append(issues, lintNonHistogramNoBucket(summaryOpts.Name)...)
 	default:
 		panic("unknown metric type")
 	}
