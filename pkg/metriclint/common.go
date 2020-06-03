@@ -21,6 +21,7 @@ import (
 	"strings"
 
 	"github.com/prometheus/client_golang/prometheus"
+	dto "github.com/prometheus/client_model/go"
 )
 
 // Units and their possible prefixes recognized by this library.  More can be
@@ -105,6 +106,9 @@ var (
 
 const (
 	NameSuffixSum = "_sum"
+
+	LabelLe = "le"
+	LabelQuantile = "quantile"
 )
 
 func lintHelp(help string) (issues []string) {
@@ -188,31 +192,84 @@ func lintNonHistogramSummaryNoSum(name string) (issues []string) {
 	return issues
 }
 
+func lintNonHistogramNoLabelLe(constLabels prometheus.Labels, labelNames []string) (issues []string) {
+	for ln, _ := range constLabels {
+		if ln == LabelLe {
+			issues = append(issues, `non-histogram metrics should not have "le" label`)
+		}
+	}
+
+	for _, ln := range labelNames {
+		if ln == LabelLe {
+			issues = append(issues, `non-histogram metrics should not have "le" label`)
+		}
+	}
+
+	return issues
+}
+
+func lintNonSummaryNoLabelQuantile(constLabels prometheus.Labels, labelNames []string) (issues []string) {
+	for ln, _ := range constLabels {
+		if ln == LabelQuantile {
+			issues = append(issues, `non-summary metrics should not have "quantile" label`)
+		}
+	}
+
+	return issues
+}
+
+func lintNoMetricTypeInName(name string) (issues []string) {
+	n := strings.ToLower(name)
+
+	for i, t := range dto.MetricType_name {
+		if i == int32(dto.MetricType_UNTYPED) {
+			continue
+		}
+
+		typename := strings.ToLower(t)
+		if strings.Contains(n, "_"+typename+"_") || strings.HasSuffix(n, "_"+typename) {
+			issues = append(issues, fmt.Sprintf(`metric name should not include type '%s'`, typename))
+		}
+	}
+
+	return issues
+}
+
 func commonLint(opts interface{}) (issues []string) {
 	switch opts.(type) {
 	case prometheus.CounterOpts:
 		counterOpts := opts.(prometheus.CounterOpts)
 		issues = append(issues, lintHelp(counterOpts.Help)...)
+		issues = append(issues, lintNoMetricTypeInName(counterOpts.Name)...)
 		issues = append(issues, lintMetricUnit(counterOpts.Name)...)
 		issues = append(issues, lintNonHistogramNoBucket(counterOpts.Name)...)
 		issues = append(issues, lintNonHistogramSummaryNoCount(counterOpts.Name)...)
 		issues = append(issues, lintNonHistogramSummaryNoSum(counterOpts.Name)...)
+		issues = append(issues, lintNonHistogramNoLabelLe(counterOpts.ConstLabels, nil)...)
+		issues = append(issues, lintNonSummaryNoLabelQuantile(counterOpts.ConstLabels, nil)...)
 	case prometheus.GaugeOpts:
 		gaugeOpts := opts.(prometheus.GaugeOpts)
 		issues = append(issues, lintHelp(gaugeOpts.Help)...)
+		issues = append(issues, lintNoMetricTypeInName(gaugeOpts.Name)...)
 		issues = append(issues, lintMetricUnit(gaugeOpts.Name)...)
 		issues = append(issues, lintNonHistogramNoBucket(gaugeOpts.Name)...)
 		issues = append(issues, lintNonHistogramSummaryNoCount(gaugeOpts.Name)...)
 		issues = append(issues, lintNonHistogramSummaryNoSum(gaugeOpts.Name)...)
+		issues = append(issues, lintNonHistogramNoLabelLe(gaugeOpts.ConstLabels, nil)...)
+		issues = append(issues, lintNonSummaryNoLabelQuantile(gaugeOpts.ConstLabels, nil)...)
 	case prometheus.HistogramOpts:
 		histogramOpts := opts.(prometheus.HistogramOpts)
 		issues = append(issues, lintHelp(histogramOpts.Help)...)
+		issues = append(issues, lintNoMetricTypeInName(histogramOpts.Name)...)
 		issues = append(issues, lintMetricUnit(histogramOpts.Name)...)
+		issues = append(issues, lintNonSummaryNoLabelQuantile(histogramOpts.ConstLabels, nil)...)
 	case prometheus.SummaryOpts:
 		summaryOpts := opts.(prometheus.SummaryOpts)
 		issues = append(issues, lintHelp(summaryOpts.Help)...)
+		issues = append(issues, lintNoMetricTypeInName(summaryOpts.Name)...)
 		issues = append(issues, lintMetricUnit(summaryOpts.Name)...)
 		issues = append(issues, lintNonHistogramNoBucket(summaryOpts.Name)...)
+		issues = append(issues, lintNonHistogramNoLabelLe(summaryOpts.ConstLabels, nil)...)
 	default:
 		panic("unknown metric type")
 	}
