@@ -32,7 +32,65 @@ func LintCounter(counterOpts prometheus.CounterOpts) *LintResult {
 		MetricName: prometheus.BuildFQName(counterOpts.Namespace, counterOpts.Subsystem, counterOpts.Name),
 	}
 
-	result.Issues = append(result.Issues, CommonLint(prometheus.Opts(counterOpts))...)
+	result.Issues = append(result.Issues, commonLint(prometheus.Opts(counterOpts))...)
+	result.Issues = append(result.Issues, lintCounterContainsTotal(result.MetricName)...)
+
+	return result
+}
+
+func LintCounterVector(counterOpts prometheus.CounterOpts, labelNames []string) *LintResult {
+	result := LintCounter(counterOpts)
+
+	return result
+}
+
+func LintGauge(gaugeOpts prometheus.GaugeOpts) *LintResult {
+	result := &LintResult{
+		MetricName: prometheus.BuildFQName(gaugeOpts.Namespace, gaugeOpts.Subsystem, gaugeOpts.Name),
+	}
+
+	result.Issues = append(result.Issues, commonLint(prometheus.Opts(gaugeOpts))...)
+	result.Issues = append(result.Issues, lintNonCounterNoTotal(result.MetricName)...)
+
+	return result
+}
+
+func LintGaugeVector(gaugeOpts prometheus.GaugeOpts, labelNames []string) *LintResult {
+	result := LintGauge(gaugeOpts)
+
+	return result
+}
+
+func LintHistogram(histogramOpts prometheus.HistogramOpts) *LintResult {
+	result := &LintResult{
+		MetricName: prometheus.BuildFQName(histogramOpts.Namespace, histogramOpts.Subsystem, histogramOpts.Name),
+	}
+
+	result.Issues = append(result.Issues, commonLint(histogramOpts)...)
+	result.Issues = append(result.Issues, lintNonCounterNoTotal(result.MetricName)...)
+
+	return result
+}
+
+func LintHistogramVector(histogramOpts prometheus.HistogramOpts, labelNames []string) *LintResult {
+	result := LintHistogram(histogramOpts)
+
+	return result
+}
+
+func LintSummary(summaryOpts prometheus.SummaryOpts) *LintResult {
+	result := &LintResult{
+		MetricName: prometheus.BuildFQName(summaryOpts.Namespace, summaryOpts.Subsystem, summaryOpts.Name),
+	}
+
+	result.Issues = append(result.Issues, commonLint(summaryOpts)...)
+	result.Issues = append(result.Issues, lintNonCounterNoTotal(result.MetricName)...)
+
+	return result
+}
+
+func LintSummaryVector(summaryOpts prometheus.SummaryOpts, labelNames []string) *LintResult {
+	result := LintSummary(summaryOpts)
 
 	return result
 }

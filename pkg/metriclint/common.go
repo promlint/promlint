@@ -158,3 +158,28 @@ func CommonLint(opts prometheus.Opts) (issues []string) {
 
 	return
 }
+
+func commonLint(opts interface{}) (issues []string) {
+	switch opts.(type) {
+	case prometheus.CounterOpts:
+		counterOpts := opts.(prometheus.CounterOpts)
+		issues = append(issues, lintHelp(counterOpts.Help)...)
+		issues = append(issues, lintMetricUnit(counterOpts.Name)...)
+	case prometheus.GaugeOpts:
+		gaugeOpts := opts.(prometheus.GaugeOpts)
+		issues = append(issues, lintHelp(gaugeOpts.Help)...)
+		issues = append(issues, lintMetricUnit(gaugeOpts.Name)...)
+	case prometheus.HistogramOpts:
+		histogramOpts := opts.(prometheus.HistogramOpts)
+		issues = append(issues, lintHelp(histogramOpts.Help)...)
+		issues = append(issues, lintMetricUnit(histogramOpts.Name)...)
+	case prometheus.SummaryOpts:
+		summaryOpts := opts.(prometheus.SummaryOpts)
+		issues = append(issues, lintHelp(summaryOpts.Help)...)
+		issues = append(issues, lintMetricUnit(summaryOpts.Name)...)
+	default:
+		panic("unknown metric type")
+	}
+
+	return issues
+}
