@@ -26,11 +26,8 @@ func lintHelp(help string) (issues []string) {
 	return
 }
 
-func CommonLint(opts prometheus.Opts) (problems []Problem) {
-	issues := lintHelp(opts.Help)
-	for _, issue := range issues {
-		problems = append(problems, Problem{MetricName:prometheus.BuildFQName(opts.Namespace, opts.Subsystem, opts.Name), ProblemDesc:issue})
-	}
+func CommonLint(opts prometheus.Opts) (issues []string) {
+	issues = append(issues, lintHelp(opts.Help)...)
 
 	return
 }

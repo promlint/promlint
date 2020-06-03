@@ -18,20 +18,21 @@ package metriclint
 
 import "github.com/prometheus/client_golang/prometheus"
 
-// A Problem is an issue detected by lint.
-type Problem struct {
-	// The name of the metric indicated by this Problem.
+// LintResult represents lint result of a specific metric.
+type LintResult struct {
+	// The FQName of a metric.
 	MetricName string
 
-	// A description of the issue for this Problem.
-	ProblemDesc string
+	// one or more lint errors of the metric.
+	Issues []string
 }
 
-func LintCounter(counterOpts prometheus.CounterOpts) (problems []Problem) {
-	subProblems := CommonLint(prometheus.Opts(counterOpts))
-	if len(subProblems) > 0 {
-		problems = append(problems, subProblems...)
+func LintCounter(counterOpts prometheus.CounterOpts) *LintResult {
+	result := &LintResult{
+		MetricName: prometheus.BuildFQName(counterOpts.Namespace, counterOpts.Subsystem, counterOpts.Name),
 	}
 
-	return
+	result.Issues = append(result.Issues, CommonLint(prometheus.Opts(counterOpts))...)
+
+	return result
 }
