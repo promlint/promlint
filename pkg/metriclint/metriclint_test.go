@@ -40,6 +40,16 @@ func TestLintCounter(t *testing.T) {
 			},
 			expectedResult: fmt.Sprintf("lint_test_total:"),
 		},
+		{
+			name: "all metric should contains help",
+			opts: prometheus.CounterOpts{
+				Name: "lint_test_total",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_test_total:%s", LintErrMsgNoHelp),
+		},
 	}
 
 	for _, test := range tests {
@@ -72,6 +82,17 @@ func TestLintCounterVector(t *testing.T) {
 			labelNames: []string{"lname1", "lname2"},
 			expectedResult: fmt.Sprintf("lint_test_total:"),
 		},
+		{
+			name: "all metric should contains help",
+			opts: prometheus.CounterOpts{
+				Name: "lint_test_total",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_test_total:%s", LintErrMsgNoHelp),
+		},
 	}
 
 	for _, test := range tests {
@@ -101,6 +122,16 @@ func TestLintGauge(t *testing.T) {
 				},
 			},
 			expectedResult: fmt.Sprintf("lint_test_numbers:"),
+		},
+		{
+			name: "all metric should contains help",
+			opts: prometheus.GaugeOpts{
+				Name: "lint_test_numbers",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_test_numbers:%s", LintErrMsgNoHelp),
 		},
 	}
 
@@ -134,6 +165,17 @@ func TestLintGaugeVector(t *testing.T) {
 			labelNames: []string{"lname1", "lname2"},
 			expectedResult: fmt.Sprintf("lint_test_numbers:"),
 		},
+		{
+			name: "all metric should contains help",
+			opts: prometheus.GaugeOpts{
+				Name: "lint_test_numbers",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_test_numbers:%s", LintErrMsgNoHelp),
+		},
 	}
 
 	for _, test := range tests {
@@ -163,6 +205,16 @@ func TestLintHistogram(t *testing.T) {
 				},
 			},
 			expectedResult: fmt.Sprintf("lint_test_seconds:"),
+		},
+		{
+			name: "all metric should contains help",
+			opts: prometheus.HistogramOpts{
+				Name: "lint_test_seconds",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_test_seconds:%s", LintErrMsgNoHelp),
 		},
 	}
 
@@ -196,6 +248,17 @@ func TestLintHistogramVector(t *testing.T) {
 			labelNames: []string{"lname1", "lname2"},
 			expectedResult: fmt.Sprintf("lint_test_seconds:"),
 		},
+		{
+			name: "all metric should contains help",
+			opts: prometheus.HistogramOpts{
+				Name: "lint_test_seconds",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_test_seconds:%s", LintErrMsgNoHelp),
+		},
 	}
 
 	for _, test := range tests {
@@ -225,6 +288,16 @@ func TestLintSummary(t *testing.T) {
 				},
 			},
 			expectedResult: fmt.Sprintf("lint_test_seconds:"),
+		},
+		{
+			name: "all metric should contains help",
+			opts: prometheus.SummaryOpts{
+				Name: "lint_test_seconds",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_test_seconds:%s", LintErrMsgNoHelp),
 		},
 	}
 
@@ -257,6 +330,17 @@ func TestLintSummaryVector(t *testing.T) {
 			},
 			labelNames: []string{"lname1", "lname2"},
 			expectedResult: fmt.Sprintf("lint_test_seconds:"),
+		},
+		{
+			name: "all metric should contains help",
+			opts: prometheus.SummaryOpts{
+				Name: "lint_test_seconds",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_test_seconds:%s", LintErrMsgNoHelp),
 		},
 	}
 
