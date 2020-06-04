@@ -61,6 +61,17 @@ func TestLintCounter(t *testing.T) {
 			},
 			expectedResult: fmt.Sprintf("lint_test_hours_total:%s", fmt.Sprintf(LintErrMsgNonBaseUnit, "seconds", "hours")),
 		},
+		{
+			name: "counter should contains total suffix",
+			opts: prometheus.CounterOpts{
+				Name: "lint_test_suffix",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_test_suffix:%s", LintErrMsgCounterShouldHaveTotalSuffix),
+		},
 	}
 
 	for _, test := range tests {
@@ -116,6 +127,18 @@ func TestLintCounterVector(t *testing.T) {
 			labelNames: []string{"lname1", "lname2"},
 			expectedResult: fmt.Sprintf("lint_test_hours_total:%s", fmt.Sprintf(LintErrMsgNonBaseUnit, "seconds", "hours")),
 		},
+		{
+			name: "counter should contains total suffix",
+			opts: prometheus.CounterOpts{
+				Name: "lint_test_suffix",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_test_suffix:%s", LintErrMsgCounterShouldHaveTotalSuffix),
+		},
 	}
 
 	for _, test := range tests {
@@ -166,6 +189,17 @@ func TestLintGauge(t *testing.T) {
 				},
 			},
 			expectedResult: fmt.Sprintf("lint_test_hours_numbers:%s", fmt.Sprintf(LintErrMsgNonBaseUnit, "seconds", "hours")),
+		},
+		{
+			name: "non counter should not have total",
+			opts: prometheus.GaugeOpts{
+				Name: "lint_test_total",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_test_total:%s", LintErrMsgNonCounterShouldNotHaveTotalSuffix),
 		},
 	}
 
@@ -222,6 +256,18 @@ func TestLintGaugeVector(t *testing.T) {
 			labelNames: []string{"lname1", "lname2"},
 			expectedResult: fmt.Sprintf("lint_test_hours_numbers:%s", fmt.Sprintf(LintErrMsgNonBaseUnit, "seconds", "hours")),
 		},
+		{
+			name: "non counter should not have total",
+			opts: prometheus.GaugeOpts{
+				Name: "lint_test_total",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_test_total:%s", LintErrMsgNonCounterShouldNotHaveTotalSuffix),
+		},
 	}
 
 	for _, test := range tests {
@@ -272,6 +318,17 @@ func TestLintHistogram(t *testing.T) {
 				},
 			},
 			expectedResult: fmt.Sprintf("lint_test_hours:%s", fmt.Sprintf(LintErrMsgNonBaseUnit, "seconds", "hours")),
+		},
+		{
+			name: "non counter should not have total",
+			opts: prometheus.HistogramOpts{
+				Name: "lint_test_total",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_test_total:%s", LintErrMsgNonCounterShouldNotHaveTotalSuffix),
 		},
 	}
 
@@ -328,6 +385,18 @@ func TestLintHistogramVector(t *testing.T) {
 			labelNames: []string{"lname1", "lname2"},
 			expectedResult: fmt.Sprintf("lint_test_hours:%s", fmt.Sprintf(LintErrMsgNonBaseUnit, "seconds", "hours")),
 		},
+		{
+			name: "non counter should not have total",
+			opts: prometheus.HistogramOpts{
+				Name: "lint_test_total",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_test_total:%s", LintErrMsgNonCounterShouldNotHaveTotalSuffix),
+		},
 	}
 
 	for _, test := range tests {
@@ -378,6 +447,17 @@ func TestLintSummary(t *testing.T) {
 				},
 			},
 			expectedResult: fmt.Sprintf("lint_test_hours:%s", fmt.Sprintf(LintErrMsgNonBaseUnit, "seconds", "hours")),
+		},
+		{
+			name: "non counter should not have total",
+			opts: prometheus.SummaryOpts{
+				Name: "lint_test_total",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_test_total:%s", LintErrMsgNonCounterShouldNotHaveTotalSuffix),
 		},
 	}
 
@@ -433,6 +513,18 @@ func TestLintSummaryVector(t *testing.T) {
 			},
 			labelNames: []string{"lname1", "lname2"},
 			expectedResult: fmt.Sprintf("lint_test_hours:%s", fmt.Sprintf(LintErrMsgNonBaseUnit, "seconds", "hours")),
+		},
+		{
+			name: "non counter should not have total",
+			opts: prometheus.SummaryOpts{
+				Name: "lint_test_total",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_test_total:%s", LintErrMsgNonCounterShouldNotHaveTotalSuffix),
 		},
 	}
 

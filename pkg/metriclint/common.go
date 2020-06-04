@@ -117,6 +117,8 @@ const (
 const (
 	LintErrMsgNoHelp = "no help text"
 	LintErrMsgNonBaseUnit = `use base unit "%s" instead of "%s"`
+	LintErrMsgCounterShouldHaveTotalSuffix = `counter metrics should have "_total" suffix`
+	LintErrMsgNonCounterShouldNotHaveTotalSuffix = `non-counter metrics should not have "_total" suffix`
 )
 
 func lintHelp(help string) (issues []string) {
@@ -133,7 +135,7 @@ func hasTotalSuffix(name string) bool {
 
 func lintCounterContainsTotal(name string) (issues []string) {
 	if !hasTotalSuffix(name) {
-		issues = append(issues, `counter metrics should have "_total" suffix`)
+		issues = append(issues, LintErrMsgCounterShouldHaveTotalSuffix)
 	}
 
 	return issues
@@ -141,7 +143,7 @@ func lintCounterContainsTotal(name string) (issues []string) {
 
 func lintNonCounterNoTotal(name string) (issues []string) {
 	if hasTotalSuffix(name) {
-		issues = append(issues, `counter metrics should not have "_total" suffix`)
+		issues = append(issues, LintErrMsgNonCounterShouldNotHaveTotalSuffix)
 	}
 
 	return issues

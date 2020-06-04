@@ -46,6 +46,8 @@ func LintCounter(counterOpts prometheus.CounterOpts) *LintResult {
 	}
 
 	result.Issues = append(result.Issues, commonLint(prometheus.Opts(counterOpts))...)
+
+	// TODO: delete me if no items below
 	result.Issues = append(result.Issues, lintCounterContainsTotal(result.MetricName)...)
 
 	return result
@@ -73,6 +75,7 @@ func LintGauge(gaugeOpts prometheus.GaugeOpts) *LintResult {
 
 func LintGaugeVector(gaugeOpts prometheus.GaugeOpts, labelNames []string) *LintResult {
 	result := LintGauge(gaugeOpts)
+
 	result.Issues = append(result.Issues, lintNonHistogramNoLabelLe(nil, labelNames)...)
 	result.Issues = append(result.Issues, lintNonSummaryNoLabelQuantile(nil, labelNames)...)
 	result.Issues = append(result.Issues, lintLabelNameCamelCase(nil, labelNames)...)
