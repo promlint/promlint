@@ -119,6 +119,9 @@ const (
 	LintErrMsgNonBaseUnit = `use base unit "%s" instead of "%s"`
 	LintErrMsgCounterShouldHaveTotalSuffix = `counter metrics should have "_total" suffix`
 	LintErrMsgNonCounterShouldNotHaveTotalSuffix = `non-counter metrics should not have "_total" suffix`
+	LintErrMsgNonHistogramShouldNotHaveBucketSuffix = `non-histogram metrics should not have "_bucket" suffix`
+	LintErrMsgNonHistogramSummaryShouldNotHaveCountSuffix = `non-histogram and non-summary metrics should not have "_count" suffix`
+	LintErrMsgMonHistogramSummaryShouldNotHaveSumSuffix = `non-histogram and non-summary metrics should not have "_sum" suffix`
 )
 
 func lintHelp(help string) (issues []string) {
@@ -326,23 +329,16 @@ func commonLint(opts interface{}) (issues []string) {
 		issues = append(issues, lintReservedChars(counterOpts.Name)...)
 		issues = append(issues, lintNameCamelCase(counterOpts.Name)...)
 		issues = append(issues, lintUnitAbbreviations(counterOpts.Name)...)
-		issues = append(issues, lintNonHistogramNoBucket(counterOpts.Name)...)
-		issues = append(issues, lintNonHistogramSummaryNoCount(counterOpts.Name)...)
-		issues = append(issues, lintNonHistogramSummaryNoSum(counterOpts.Name)...)
+
 		issues = append(issues, lintNonHistogramNoLabelLe(counterOpts.ConstLabels, nil)...)
 		issues = append(issues, lintNonSummaryNoLabelQuantile(counterOpts.ConstLabels, nil)...)
 		issues = append(issues, lintLabelNameCamelCase(counterOpts.ConstLabels, nil)...)
 	case prometheus.GaugeOpts:
 		gaugeOpts := opts.(prometheus.GaugeOpts)
-		issues = append(issues, lintHelp(gaugeOpts.Help)...)
 		issues = append(issues, lintNoMetricTypeInName(gaugeOpts.Name)...)
 		issues = append(issues, lintReservedChars(gaugeOpts.Name)...)
-		issues = append(issues, lintMetricUnit(gaugeOpts.Name)...)
 		issues = append(issues, lintNameCamelCase(gaugeOpts.Name)...)
 		issues = append(issues, lintUnitAbbreviations(gaugeOpts.Name)...)
-		issues = append(issues, lintNonHistogramNoBucket(gaugeOpts.Name)...)
-		issues = append(issues, lintNonHistogramSummaryNoCount(gaugeOpts.Name)...)
-		issues = append(issues, lintNonHistogramSummaryNoSum(gaugeOpts.Name)...)
 		issues = append(issues, lintNonHistogramNoLabelLe(gaugeOpts.ConstLabels, nil)...)
 		issues = append(issues, lintNonSummaryNoLabelQuantile(gaugeOpts.ConstLabels, nil)...)
 		issues = append(issues, lintLabelNameCamelCase(gaugeOpts.ConstLabels, nil)...)
@@ -371,7 +367,6 @@ func commonLint(opts interface{}) (issues []string) {
 		// TODO: delete me if no items below
 		issues = append(issues, lintNoMetricTypeInName(fqName)...)
 		issues = append(issues, lintReservedChars(fqName)...)
-		issues = append(issues, lintNonHistogramNoBucket(fqName)...)
 		issues = append(issues, lintNameCamelCase(fqName)...)
 		issues = append(issues, lintUnitAbbreviations(fqName)...)
 		issues = append(issues, lintNonHistogramNoLabelLe(summaryOpts.ConstLabels, nil)...)

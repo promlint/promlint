@@ -201,6 +201,39 @@ func TestLintGauge(t *testing.T) {
 			},
 			expectedResult: fmt.Sprintf("lint_test_total:%s", LintErrMsgNonCounterShouldNotHaveTotalSuffix),
 		},
+		{
+			name: "non histogram should not have bucket suffix",
+			opts: prometheus.GaugeOpts{
+				Name: "lint_test_bucket",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_test_bucket:%s", LintErrMsgNonHistogramShouldNotHaveBucketSuffix),
+		},
+		{
+			name: "non histogram summary should not have count suffix",
+			opts: prometheus.GaugeOpts{
+				Name: "lint_test_count",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_test_count:%s", LintErrMsgNonHistogramSummaryShouldNotHaveCountSuffix),
+		},
+		{
+			name: "non histogram summary should not have sum suffix",
+			opts: prometheus.GaugeOpts{
+				Name: "lint_test_sum",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_test_sum:%s", LintErrMsgMonHistogramSummaryShouldNotHaveSumSuffix),
+		},
 	}
 
 	for _, test := range tests {
@@ -267,6 +300,42 @@ func TestLintGaugeVector(t *testing.T) {
 			},
 			labelNames: []string{"lname1", "lname2"},
 			expectedResult: fmt.Sprintf("lint_test_total:%s", LintErrMsgNonCounterShouldNotHaveTotalSuffix),
+		},
+		{
+			name: "non histogram should not have bucket suffix",
+			opts: prometheus.GaugeOpts{
+				Name: "lint_test_bucket",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_test_bucket:%s", LintErrMsgNonHistogramShouldNotHaveBucketSuffix),
+		},
+		{
+			name: "non histogram summary should not have count suffix",
+			opts: prometheus.GaugeOpts{
+				Name: "lint_test_count",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_test_count:%s", LintErrMsgNonHistogramSummaryShouldNotHaveCountSuffix),
+		},
+		{
+			name: "non histogram summary should not have sum suffix",
+			opts: prometheus.GaugeOpts{
+				Name: "lint_test_sum",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_test_sum:%s", LintErrMsgMonHistogramSummaryShouldNotHaveSumSuffix),
 		},
 	}
 
@@ -459,6 +528,17 @@ func TestLintSummary(t *testing.T) {
 			},
 			expectedResult: fmt.Sprintf("lint_test_total:%s", LintErrMsgNonCounterShouldNotHaveTotalSuffix),
 		},
+		{
+			name: "non histogram should not have bucket suffix",
+			opts: prometheus.SummaryOpts{
+				Name: "lint_test_bucket",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_test_bucket:%s", LintErrMsgNonHistogramShouldNotHaveBucketSuffix),
+		},
 	}
 
 	for _, test := range tests {
@@ -525,6 +605,18 @@ func TestLintSummaryVector(t *testing.T) {
 			},
 			labelNames: []string{"lname1", "lname2"},
 			expectedResult: fmt.Sprintf("lint_test_total:%s", LintErrMsgNonCounterShouldNotHaveTotalSuffix),
+		},
+		{
+			name: "non histogram should not have bucket suffix",
+			opts: prometheus.SummaryOpts{
+				Name: "lint_test_bucket",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_test_bucket:%s", LintErrMsgNonHistogramShouldNotHaveBucketSuffix),
 		},
 	}
 

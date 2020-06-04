@@ -46,6 +46,9 @@ func LintCounter(counterOpts prometheus.CounterOpts) *LintResult {
 	}
 
 	result.Issues = append(result.Issues, commonLint(prometheus.Opts(counterOpts))...)
+	result.Issues = append(result.Issues, lintNonHistogramNoBucket(result.MetricName)...)
+	result.Issues = append(result.Issues, lintNonHistogramSummaryNoCount(result.MetricName)...)
+	result.Issues = append(result.Issues, lintNonHistogramSummaryNoSum(result.MetricName)...)
 
 	// TODO: delete me if no items below
 	result.Issues = append(result.Issues, lintCounterContainsTotal(result.MetricName)...)
@@ -69,6 +72,9 @@ func LintGauge(gaugeOpts prometheus.GaugeOpts) *LintResult {
 
 	result.Issues = append(result.Issues, commonLint(prometheus.Opts(gaugeOpts))...)
 	result.Issues = append(result.Issues, lintNonCounterNoTotal(result.MetricName)...)
+	result.Issues = append(result.Issues, lintNonHistogramNoBucket(result.MetricName)...)
+	result.Issues = append(result.Issues, lintNonHistogramSummaryNoCount(result.MetricName)...)
+	result.Issues = append(result.Issues, lintNonHistogramSummaryNoSum(result.MetricName)...)
 
 	return result
 }
@@ -109,6 +115,7 @@ func LintSummary(summaryOpts prometheus.SummaryOpts) *LintResult {
 
 	result.Issues = append(result.Issues, commonLint(summaryOpts)...)
 	result.Issues = append(result.Issues, lintNonCounterNoTotal(result.MetricName)...)
+	result.Issues = append(result.Issues, lintNonHistogramNoBucket(result.MetricName)...)
 
 	return result
 }
