@@ -116,6 +116,17 @@ func TestLintCounter(t *testing.T) {
 			},
 			expectedResult: fmt.Sprintf("lint_:_total:%s", LintErrMsgNoReservedChars),
 		},
+		{
+			name: "name label should in snake case",
+			opts: prometheus.CounterOpts{
+				Name: "lint_tesT_total",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lName": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_tesT_total:%s,%s", LintErrMsgNameShouldBeSnakeCase, LintErrMsgLabelShouldBeSnakeCase),
+		},
 	}
 
 	for _, test := range tests {
@@ -230,6 +241,18 @@ func TestLintCounterVector(t *testing.T) {
 			},
 			labelNames: []string{"lname1", "lname2"},
 			expectedResult: fmt.Sprintf("lint_:_total:%s", LintErrMsgNoReservedChars),
+		},
+		{
+			name: "name label should in snake case",
+			opts: prometheus.CounterOpts{
+				Name: "lint_tesT_total",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lName1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_tesT_total:%s,%s", LintErrMsgNameShouldBeSnakeCase, LintErrMsgLabelShouldBeSnakeCase),
 		},
 	}
 
@@ -369,6 +392,17 @@ func TestLintGauge(t *testing.T) {
 				},
 			},
 			expectedResult: fmt.Sprintf("lint_:_numbers:%s", LintErrMsgNoReservedChars),
+		},
+		{
+			name: "name label should in snake case",
+			opts: prometheus.GaugeOpts{
+				Name: "lint_tesT_numbers",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lName": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_tesT_numbers:%s,%s", LintErrMsgNameShouldBeSnakeCase, LintErrMsgLabelShouldBeSnakeCase),
 		},
 	}
 
@@ -521,6 +555,18 @@ func TestLintGaugeVector(t *testing.T) {
 			labelNames: []string{"lname1", "lname2"},
 			expectedResult: fmt.Sprintf("lint_:_numbers:%s", LintErrMsgNoReservedChars),
 		},
+		{
+			name: "name label should in snake case",
+			opts: prometheus.GaugeOpts{
+				Name: "lint_tesT_numbers",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lName1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_tesT_numbers:%s,%s", LintErrMsgNameShouldBeSnakeCase, LintErrMsgLabelShouldBeSnakeCase),
+		},
 	}
 
 	for _, test := range tests {
@@ -615,6 +661,17 @@ func TestLintHistogram(t *testing.T) {
 				},
 			},
 			expectedResult: fmt.Sprintf("lint_:_seconds:%s", LintErrMsgNoReservedChars),
+		},
+		{
+			name: "name label should in snake case",
+			opts: prometheus.HistogramOpts{
+				Name: "lint_tesT_seconds",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lName": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_tesT_seconds:%s,%s", LintErrMsgNameShouldBeSnakeCase, LintErrMsgLabelShouldBeSnakeCase),
 		},
 	}
 
@@ -718,6 +775,18 @@ func TestLintHistogramVector(t *testing.T) {
 			},
 			labelNames: []string{"lname1", "lname2"},
 			expectedResult: fmt.Sprintf("lint_:_seconds:%s", LintErrMsgNoReservedChars),
+		},
+		{
+			name: "name label should in snake case",
+			opts: prometheus.HistogramOpts{
+				Name: "lint_tesT_seconds",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lName1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_tesT_seconds:%s,%s", LintErrMsgNameShouldBeSnakeCase, LintErrMsgLabelShouldBeSnakeCase),
 		},
 	}
 
@@ -824,6 +893,17 @@ func TestLintSummary(t *testing.T) {
 				},
 			},
 			expectedResult: fmt.Sprintf("lint_:_seconds:%s", LintErrMsgNoReservedChars),
+		},
+		{
+			name: "name label should in snake case",
+			opts: prometheus.SummaryOpts{
+				Name: "lint_tesT_seconds",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lName": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_tesT_seconds:%s,%s", LintErrMsgNameShouldBeSnakeCase, LintErrMsgLabelShouldBeSnakeCase),
 		},
 	}
 
@@ -939,6 +1019,18 @@ func TestLintSummaryVector(t *testing.T) {
 			},
 			labelNames: []string{"lname1", "lname2"},
 			expectedResult: fmt.Sprintf("lint_:_seconds:%s", LintErrMsgNoReservedChars),
+		},
+		{
+			name: "name label should in snake case",
+			opts: prometheus.SummaryOpts{
+				Name: "lint_tesT_seconds",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lName1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_tesT_seconds:%s,%s", LintErrMsgNameShouldBeSnakeCase, LintErrMsgLabelShouldBeSnakeCase),
 		},
 	}
 

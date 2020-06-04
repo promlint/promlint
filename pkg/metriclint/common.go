@@ -126,6 +126,9 @@ const (
 	LintErrMsgNonSummaryShouldNotHaveQuantileLabel = `non-summary metrics should not have "quantile" label`
 	LintErrMsgNoMetricType = `metric name should not include type '%s'`
 	LintErrMsgNoReservedChars = `metric names should not contain ':'`
+	LintErrMsgNameShouldBeSnakeCase = `metric names should be written in 'snake_case' not 'camelCase'`
+	LintErrMsgLabelShouldBeSnakeCase = `label names should be written in 'snake_case' not 'camelCase'`
+	LintErrMsgNameShouldNotHaveAbbr = `metric names should not contain abbreviated units`
 )
 
 func lintHelp(help string) (issues []string) {
@@ -286,6 +289,7 @@ func lintReservedChars(name string) (issues []string) {
 	return issues
 }
 
+// TODO(RainbowMango): one bug, e.g. `lint_Test_total` will pass the check.
 func lintNameCamelCase(name string) (issues []string) {
 	if camelCase.FindString(name) != "" {
 		issues = append(issues, "metric names should be written in 'snake_case' not 'camelCase'")
