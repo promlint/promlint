@@ -294,7 +294,7 @@ func lintNameCamelCase(name string) (issues []string) {
 	return issues
 }
 
-// TODO(RainbowMango): Should check label value?
+// TODO(RainbowMango): Should check label value? Check with promlint guys.
 func lintLabelNameCamelCase(constLabels prometheus.Labels, labelNames []string) (issues []string) {
 	for ln, _ := range constLabels {
 		if camelCase.FindString(ln) != "" {
@@ -334,37 +334,14 @@ func commonLint(opts interface{}) (issues []string) {
 		counterGagueOpts := opts.(prometheus.Opts)
 		fqName = prometheus.BuildFQName(counterGagueOpts.Namespace, counterGagueOpts.Subsystem, counterGagueOpts.Name)
 		help = counterGagueOpts.Help
-	case prometheus.CounterOpts:
-		counterOpts := opts.(prometheus.CounterOpts)
-		issues = append(issues, lintNameCamelCase(counterOpts.Name)...)
-		issues = append(issues, lintUnitAbbreviations(counterOpts.Name)...)
-
-
-		issues = append(issues, lintLabelNameCamelCase(counterOpts.ConstLabels, nil)...)
-	case prometheus.GaugeOpts:
-		gaugeOpts := opts.(prometheus.GaugeOpts)
-		issues = append(issues, lintNameCamelCase(gaugeOpts.Name)...)
-		issues = append(issues, lintUnitAbbreviations(gaugeOpts.Name)...)
-		issues = append(issues, lintLabelNameCamelCase(gaugeOpts.ConstLabels, nil)...)
 	case prometheus.HistogramOpts:
 		histogramOpts := opts.(prometheus.HistogramOpts)
 		fqName = prometheus.BuildFQName(histogramOpts.Namespace, histogramOpts.Subsystem, histogramOpts.Name)
 		help = histogramOpts.Help
-
-		// TODO: delete me if no items below
-		issues = append(issues, lintNameCamelCase(fqName)...)
-		issues = append(issues, lintUnitAbbreviations(fqName)...)
-
-		issues = append(issues, lintLabelNameCamelCase(histogramOpts.ConstLabels, nil)...)
 	case prometheus.SummaryOpts:
 		summaryOpts := opts.(prometheus.SummaryOpts)
 		fqName = prometheus.BuildFQName(summaryOpts.Namespace, summaryOpts.Subsystem, summaryOpts.Name)
 		help = summaryOpts.Help
-
-		// TODO: delete me if no items below
-		issues = append(issues, lintNameCamelCase(fqName)...)
-		issues = append(issues, lintUnitAbbreviations(fqName)...)
-		issues = append(issues, lintLabelNameCamelCase(summaryOpts.ConstLabels, nil)...)
 	default:
 		panic(fmt.Sprintf("unknow metric type: %T", opts))
 	}
@@ -373,6 +350,8 @@ func commonLint(opts interface{}) (issues []string) {
 	issues = append(issues, lintMetricUnit(fqName)...) // name should use standard units.
 	issues = append(issues, lintNoMetricTypeInName(fqName)...) // metric name should not include metric type
 	issues = append(issues, lintReservedChars(fqName)...) // metric names should not contain ':'
+	issues = append(issues, lintNameCamelCase(fqName)...) // metric names should be written in 'snake_case' not 'camelCase'
+	issues = append(issues, lintUnitAbbreviations(fqName)...) // metric names should not contain abbreviated units
 
 	return issues
 }

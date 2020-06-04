@@ -55,6 +55,7 @@ func LintCounter(counterOpts prometheus.CounterOpts) *LintResult {
 	// lint labels
 	result.Issues = append(result.Issues, lintNonHistogramNoLabelLe(counterOpts.ConstLabels, nil)...)
 	result.Issues = append(result.Issues, lintNonSummaryNoLabelQuantile(counterOpts.ConstLabels, nil)...)
+	result.Issues = append(result.Issues, lintLabelNameCamelCase(counterOpts.ConstLabels, nil)...)
 
 	// TODO: delete me if no items below
 	result.Issues = append(result.Issues, lintCounterContainsTotal(result.MetricName)...)
@@ -66,7 +67,6 @@ func LintCounterVector(counterOpts prometheus.CounterOpts, labelNames []string) 
 	result := LintCounter(counterOpts)
 	result.Issues = append(result.Issues, lintNonHistogramNoLabelLe(nil, labelNames)...)
 	result.Issues = append(result.Issues, lintNonSummaryNoLabelQuantile(nil, labelNames)...)
-
 	result.Issues = append(result.Issues, lintLabelNameCamelCase(nil, labelNames)...)
 
 	return result
@@ -86,6 +86,7 @@ func LintGauge(gaugeOpts prometheus.GaugeOpts) *LintResult {
 	// lint labels
 	result.Issues = append(result.Issues, lintNonHistogramNoLabelLe(gaugeOpts.ConstLabels, nil)...)
 	result.Issues = append(result.Issues, lintNonSummaryNoLabelQuantile(gaugeOpts.ConstLabels, nil)...)
+	result.Issues = append(result.Issues, lintLabelNameCamelCase(gaugeOpts.ConstLabels, nil)...)
 
 	return result
 }
@@ -94,7 +95,6 @@ func LintGaugeVector(gaugeOpts prometheus.GaugeOpts, labelNames []string) *LintR
 	result := LintGauge(gaugeOpts)
 
 	result.Issues = append(result.Issues, lintNonHistogramNoLabelLe(nil, labelNames)...)
-
 	result.Issues = append(result.Issues, lintNonSummaryNoLabelQuantile(nil, labelNames)...)
 	result.Issues = append(result.Issues, lintLabelNameCamelCase(nil, labelNames)...)
 
@@ -111,6 +111,7 @@ func LintHistogram(histogramOpts prometheus.HistogramOpts) *LintResult {
 
 	// lint labels
 	result.Issues = append(result.Issues, lintNonSummaryNoLabelQuantile(histogramOpts.ConstLabels, nil)...)
+	result.Issues = append(result.Issues, lintLabelNameCamelCase(histogramOpts.ConstLabels, nil)...)
 
 
 	return result
@@ -135,6 +136,7 @@ func LintSummary(summaryOpts prometheus.SummaryOpts) *LintResult {
 
 	// lint labels
 	result.Issues = append(result.Issues, lintNonHistogramNoLabelLe(summaryOpts.ConstLabels, nil)...)
+	result.Issues = append(result.Issues, lintLabelNameCamelCase(summaryOpts.ConstLabels, nil)...)
 
 	return result
 }
