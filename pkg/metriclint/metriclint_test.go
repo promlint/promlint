@@ -127,6 +127,17 @@ func TestLintCounter(t *testing.T) {
 			},
 			expectedResult: fmt.Sprintf("lint_tesT_total:%s,%s", LintErrMsgNameShouldBeSnakeCase, LintErrMsgLabelShouldBeSnakeCase),
 		},
+		{
+			name: "should not contain abbreviated unit",
+			opts: prometheus.CounterOpts{
+				Name: "lint_ms_total",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_ms_total:%s", LintErrMsgNameShouldNotHaveAbbr),
+		},
 	}
 
 	for _, test := range tests {
@@ -253,6 +264,18 @@ func TestLintCounterVector(t *testing.T) {
 			},
 			labelNames: []string{"lName1", "lname2"},
 			expectedResult: fmt.Sprintf("lint_tesT_total:%s,%s", LintErrMsgNameShouldBeSnakeCase, LintErrMsgLabelShouldBeSnakeCase),
+		},
+		{
+			name: "should not contain abbreviated unit",
+			opts: prometheus.CounterOpts{
+				Name: "lint_ms_total",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_ms_total:%s", LintErrMsgNameShouldNotHaveAbbr),
 		},
 	}
 
@@ -403,6 +426,17 @@ func TestLintGauge(t *testing.T) {
 				},
 			},
 			expectedResult: fmt.Sprintf("lint_tesT_numbers:%s,%s", LintErrMsgNameShouldBeSnakeCase, LintErrMsgLabelShouldBeSnakeCase),
+		},
+		{
+			name: "should not contain abbreviated unit",
+			opts: prometheus.GaugeOpts{
+				Name: "lint_ms_numbers",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_ms_numbers:%s", LintErrMsgNameShouldNotHaveAbbr),
 		},
 	}
 
@@ -567,6 +601,18 @@ func TestLintGaugeVector(t *testing.T) {
 			labelNames: []string{"lName1", "lname2"},
 			expectedResult: fmt.Sprintf("lint_tesT_numbers:%s,%s", LintErrMsgNameShouldBeSnakeCase, LintErrMsgLabelShouldBeSnakeCase),
 		},
+		{
+			name: "should not contain abbreviated unit",
+			opts: prometheus.GaugeOpts{
+				Name: "lint_ms_numbers",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_ms_numbers:%s", LintErrMsgNameShouldNotHaveAbbr),
+		},
 	}
 
 	for _, test := range tests {
@@ -672,6 +718,17 @@ func TestLintHistogram(t *testing.T) {
 				},
 			},
 			expectedResult: fmt.Sprintf("lint_tesT_seconds:%s,%s", LintErrMsgNameShouldBeSnakeCase, LintErrMsgLabelShouldBeSnakeCase),
+		},
+		{
+			name: "should not contain abbreviated unit",
+			opts: prometheus.HistogramOpts{
+				Name: "lint_ms_seconds",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_ms_seconds:%s", LintErrMsgNameShouldNotHaveAbbr),
 		},
 	}
 
@@ -787,6 +844,18 @@ func TestLintHistogramVector(t *testing.T) {
 			},
 			labelNames: []string{"lName1", "lname2"},
 			expectedResult: fmt.Sprintf("lint_tesT_seconds:%s,%s", LintErrMsgNameShouldBeSnakeCase, LintErrMsgLabelShouldBeSnakeCase),
+		},
+		{
+			name: "should not contain abbreviated unit",
+			opts: prometheus.HistogramOpts{
+				Name: "lint_ms_seconds",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_ms_seconds:%s", LintErrMsgNameShouldNotHaveAbbr),
 		},
 	}
 
@@ -904,6 +973,17 @@ func TestLintSummary(t *testing.T) {
 				},
 			},
 			expectedResult: fmt.Sprintf("lint_tesT_seconds:%s,%s", LintErrMsgNameShouldBeSnakeCase, LintErrMsgLabelShouldBeSnakeCase),
+		},
+		{
+			name: "should not contain abbreviated unit",
+			opts: prometheus.SummaryOpts{
+				Name: "lint_ms_seconds",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_ms_seconds:%s", LintErrMsgNameShouldNotHaveAbbr),
 		},
 	}
 
@@ -1031,6 +1111,18 @@ func TestLintSummaryVector(t *testing.T) {
 			},
 			labelNames: []string{"lName1", "lname2"},
 			expectedResult: fmt.Sprintf("lint_tesT_seconds:%s,%s", LintErrMsgNameShouldBeSnakeCase, LintErrMsgLabelShouldBeSnakeCase),
+		},
+		{
+			name: "should not contain abbreviated unit",
+			opts: prometheus.SummaryOpts{
+				Name: "lint_ms_seconds",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_ms_seconds:%s", LintErrMsgNameShouldNotHaveAbbr),
 		},
 	}
 
