@@ -124,6 +124,7 @@ const (
 	LintErrMsgMonHistogramSummaryShouldNotHaveSumSuffix = `non-histogram and non-summary metrics should not have "_sum" suffix`
 	LintErrMsgNonHistogramShouldNotHaveLeLabel = `non-histogram metrics should not have "le" label`
 	LintErrMsgNonSummaryShouldNotHaveQuantileLabel = `non-summary metrics should not have "quantile" label`
+	LintErrMsgNoMetricType = `metric name should not include type '%s'`
 )
 
 func lintHelp(help string) (issues []string) {
@@ -322,18 +323,18 @@ func lintUnitAbbreviations(name string) (issues []string) {
 	return issues
 }
 
+// commonLint checks the common rules for all types of metric.
 func commonLint(opts interface{}) (issues []string) {
+	var fqName string
+	var help string
+
 	switch opts.(type) {
 	case prometheus.Opts: // prometheus.CounterOpts and prometheus.GaugeOpts share the type.
 		counterGagueOpts := opts.(prometheus.Opts)
-		fqName := prometheus.BuildFQName(counterGagueOpts.Namespace, counterGagueOpts.Subsystem, counterGagueOpts.Name)
-
-		issues = append(issues, lintHelp(counterGagueOpts.Help)...) // metrics should contains help.
-		issues = append(issues, lintMetricUnit(fqName)...) // name should use standard units.
-
+		fqName = prometheus.BuildFQName(counterGagueOpts.Namespace, counterGagueOpts.Subsystem, counterGagueOpts.Name)
+		help = counterGagueOpts.Help
 	case prometheus.CounterOpts:
 		counterOpts := opts.(prometheus.CounterOpts)
-		issues = append(issues, lintNoMetricTypeInName(counterOpts.Name)...)
 		issues = append(issues, lintReservedChars(counterOpts.Name)...)
 		issues = append(issues, lintNameCamelCase(counterOpts.Name)...)
 		issues = append(issues, lintUnitAbbreviations(counterOpts.Name)...)
@@ -342,20 +343,16 @@ func commonLint(opts interface{}) (issues []string) {
 		issues = append(issues, lintLabelNameCamelCase(counterOpts.ConstLabels, nil)...)
 	case prometheus.GaugeOpts:
 		gaugeOpts := opts.(prometheus.GaugeOpts)
-		issues = append(issues, lintNoMetricTypeInName(gaugeOpts.Name)...)
 		issues = append(issues, lintReservedChars(gaugeOpts.Name)...)
 		issues = append(issues, lintNameCamelCase(gaugeOpts.Name)...)
 		issues = append(issues, lintUnitAbbreviations(gaugeOpts.Name)...)
 		issues = append(issues, lintLabelNameCamelCase(gaugeOpts.ConstLabels, nil)...)
 	case prometheus.HistogramOpts:
 		histogramOpts := opts.(prometheus.HistogramOpts)
-		fqName := prometheus.BuildFQName(histogramOpts.Namespace, histogramOpts.Subsystem, histogramOpts.Name)
-
-		issues = append(issues, lintHelp(histogramOpts.Help)...)
-		issues = append(issues, lintMetricUnit(fqName)...)
+		fqName = prometheus.BuildFQName(histogramOpts.Namespace, histogramOpts.Subsystem, histogramOpts.Name)
+		help = histogramOpts.Help
 
 		// TODO: delete me if no items below
-		issues = append(issues, lintNoMetricTypeInName(fqName)...)
 		issues = append(issues, lintReservedChars(fqName)...)
 		issues = append(issues, lintNameCamelCase(fqName)...)
 		issues = append(issues, lintUnitAbbreviations(fqName)...)
@@ -363,13 +360,10 @@ func commonLint(opts interface{}) (issues []string) {
 		issues = append(issues, lintLabelNameCamelCase(histogramOpts.ConstLabels, nil)...)
 	case prometheus.SummaryOpts:
 		summaryOpts := opts.(prometheus.SummaryOpts)
-		fqName := prometheus.BuildFQName(summaryOpts.Namespace, summaryOpts.Subsystem, summaryOpts.Name)
-
-		issues = append(issues, lintHelp(summaryOpts.Help)...)
-		issues = append(issues, lintMetricUnit(fqName)...)
+		fqName = prometheus.BuildFQName(summaryOpts.Namespace, summaryOpts.Subsystem, summaryOpts.Name)
+		help = summaryOpts.Help
 
 		// TODO: delete me if no items below
-		issues = append(issues, lintNoMetricTypeInName(fqName)...)
 		issues = append(issues, lintReservedChars(fqName)...)
 		issues = append(issues, lintNameCamelCase(fqName)...)
 		issues = append(issues, lintUnitAbbreviations(fqName)...)
@@ -377,6 +371,10 @@ func commonLint(opts interface{}) (issues []string) {
 	default:
 		panic(fmt.Sprintf("unknow metric type: %T", opts))
 	}
+
+	issues = append(issues, lintHelp(help)...) // metrics should contains help.
+	issues = append(issues, lintMetricUnit(fqName)...) // name should use standard units.
+	issues = append(issues, lintNoMetricTypeInName(fqName)...) // metric name should not include metric type
 
 	return issues
 }

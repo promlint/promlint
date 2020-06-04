@@ -94,6 +94,17 @@ func TestLintCounter(t *testing.T) {
 			},
 			expectedResult: fmt.Sprintf("lint_test_total:%s", LintErrMsgNonSummaryShouldNotHaveQuantileLabel),
 		},
+		{
+			name: "should not have metric type",
+			opts: prometheus.CounterOpts{
+				Name: "lint_counter_total",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_counter_total:%s", fmt.Sprintf(LintErrMsgNoMetricType, "counter")),
+		},
 	}
 
 	for _, test := range tests {
@@ -184,6 +195,18 @@ func TestLintCounterVector(t *testing.T) {
 			},
 			labelNames: []string{"quantile", "lname2"},
 			expectedResult: fmt.Sprintf("lint_test_total:%s", LintErrMsgNonSummaryShouldNotHaveQuantileLabel),
+		},
+		{
+			name: "should not have metric type",
+			opts: prometheus.CounterOpts{
+				Name: "lint_counter_total",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_counter_total:%s", fmt.Sprintf(LintErrMsgNoMetricType, "counter")),
 		},
 	}
 
@@ -301,6 +324,17 @@ func TestLintGauge(t *testing.T) {
 				},
 			},
 			expectedResult: fmt.Sprintf("lint_test_numbers:%s", LintErrMsgNonSummaryShouldNotHaveQuantileLabel),
+		},
+		{
+			name: "should not have metric type",
+			opts: prometheus.GaugeOpts{
+				Name: "lint_gauge_numbers",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_gauge_numbers:%s", fmt.Sprintf(LintErrMsgNoMetricType, "gauge")),
 		},
 	}
 
@@ -429,6 +463,18 @@ func TestLintGaugeVector(t *testing.T) {
 			labelNames: []string{"quantile", "lname2"},
 			expectedResult: fmt.Sprintf("lint_test_numbers:%s", LintErrMsgNonSummaryShouldNotHaveQuantileLabel),
 		},
+		{
+			name: "should not have metric type",
+			opts: prometheus.GaugeOpts{
+				Name: "lint_gauge_numbers",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_gauge_numbers:%s", fmt.Sprintf(LintErrMsgNoMetricType, "gauge")),
+		},
 	}
 
 	for _, test := range tests {
@@ -501,6 +547,17 @@ func TestLintHistogram(t *testing.T) {
 				},
 			},
 			expectedResult: fmt.Sprintf("lint_test_seconds:%s", LintErrMsgNonSummaryShouldNotHaveQuantileLabel),
+		},
+		{
+			name: "should not contains type name",
+			opts: prometheus.HistogramOpts{
+				Name: "lint_histogram_seconds",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_histogram_seconds:%s", fmt.Sprintf(LintErrMsgNoMetricType, "histogram")),
 		},
 	}
 
@@ -580,6 +637,18 @@ func TestLintHistogramVector(t *testing.T) {
 			},
 			labelNames: []string{"quantile", "lname2"},
 			expectedResult: fmt.Sprintf("lint_test_seconds:%s", LintErrMsgNonSummaryShouldNotHaveQuantileLabel),
+		},
+		{
+			name: "should not have metric type",
+			opts: prometheus.HistogramOpts{
+				Name: "lint_histogram_seconds",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_histogram_seconds:%s", fmt.Sprintf(LintErrMsgNoMetricType, "histogram")),
 		},
 	}
 
@@ -664,6 +733,17 @@ func TestLintSummary(t *testing.T) {
 				},
 			},
 			expectedResult: fmt.Sprintf("lint_test_seconds:%s", LintErrMsgNonHistogramShouldNotHaveLeLabel),
+		},
+		{
+			name: "should not have metric type",
+			opts: prometheus.SummaryOpts{
+				Name: "lint_summary_seconds",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_summary_seconds:%s", fmt.Sprintf(LintErrMsgNoMetricType, "summary")),
 		},
 	}
 
@@ -755,6 +835,18 @@ func TestLintSummaryVector(t *testing.T) {
 			},
 			labelNames: []string{"le", "lname2"},
 			expectedResult: fmt.Sprintf("lint_test_seconds:%s", LintErrMsgNonHistogramShouldNotHaveLeLabel),
+		},
+		{
+			name: "should not have metric type",
+			opts: prometheus.SummaryOpts{
+				Name: "lint_summary_seconds",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_summary_seconds:%s", fmt.Sprintf(LintErrMsgNoMetricType, "summary")),
 		},
 	}
 
