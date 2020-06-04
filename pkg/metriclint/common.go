@@ -125,6 +125,7 @@ const (
 	LintErrMsgNonHistogramShouldNotHaveLeLabel = `non-histogram metrics should not have "le" label`
 	LintErrMsgNonSummaryShouldNotHaveQuantileLabel = `non-summary metrics should not have "quantile" label`
 	LintErrMsgNoMetricType = `metric name should not include type '%s'`
+	LintErrMsgNoReservedChars = `metric names should not contain ':'`
 )
 
 func lintHelp(help string) (issues []string) {
@@ -335,7 +336,6 @@ func commonLint(opts interface{}) (issues []string) {
 		help = counterGagueOpts.Help
 	case prometheus.CounterOpts:
 		counterOpts := opts.(prometheus.CounterOpts)
-		issues = append(issues, lintReservedChars(counterOpts.Name)...)
 		issues = append(issues, lintNameCamelCase(counterOpts.Name)...)
 		issues = append(issues, lintUnitAbbreviations(counterOpts.Name)...)
 
@@ -343,7 +343,6 @@ func commonLint(opts interface{}) (issues []string) {
 		issues = append(issues, lintLabelNameCamelCase(counterOpts.ConstLabels, nil)...)
 	case prometheus.GaugeOpts:
 		gaugeOpts := opts.(prometheus.GaugeOpts)
-		issues = append(issues, lintReservedChars(gaugeOpts.Name)...)
 		issues = append(issues, lintNameCamelCase(gaugeOpts.Name)...)
 		issues = append(issues, lintUnitAbbreviations(gaugeOpts.Name)...)
 		issues = append(issues, lintLabelNameCamelCase(gaugeOpts.ConstLabels, nil)...)
@@ -353,7 +352,6 @@ func commonLint(opts interface{}) (issues []string) {
 		help = histogramOpts.Help
 
 		// TODO: delete me if no items below
-		issues = append(issues, lintReservedChars(fqName)...)
 		issues = append(issues, lintNameCamelCase(fqName)...)
 		issues = append(issues, lintUnitAbbreviations(fqName)...)
 
@@ -364,7 +362,6 @@ func commonLint(opts interface{}) (issues []string) {
 		help = summaryOpts.Help
 
 		// TODO: delete me if no items below
-		issues = append(issues, lintReservedChars(fqName)...)
 		issues = append(issues, lintNameCamelCase(fqName)...)
 		issues = append(issues, lintUnitAbbreviations(fqName)...)
 		issues = append(issues, lintLabelNameCamelCase(summaryOpts.ConstLabels, nil)...)
@@ -375,6 +372,7 @@ func commonLint(opts interface{}) (issues []string) {
 	issues = append(issues, lintHelp(help)...) // metrics should contains help.
 	issues = append(issues, lintMetricUnit(fqName)...) // name should use standard units.
 	issues = append(issues, lintNoMetricTypeInName(fqName)...) // metric name should not include metric type
+	issues = append(issues, lintReservedChars(fqName)...) // metric names should not contain ':'
 
 	return issues
 }

@@ -105,6 +105,17 @@ func TestLintCounter(t *testing.T) {
 			},
 			expectedResult: fmt.Sprintf("lint_counter_total:%s", fmt.Sprintf(LintErrMsgNoMetricType, "counter")),
 		},
+		{
+			name: "should not have special chars",
+			opts: prometheus.CounterOpts{
+				Name: "lint_:_total",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_:_total:%s", LintErrMsgNoReservedChars),
+		},
 	}
 
 	for _, test := range tests {
@@ -207,6 +218,18 @@ func TestLintCounterVector(t *testing.T) {
 			},
 			labelNames: []string{"lname1", "lname2"},
 			expectedResult: fmt.Sprintf("lint_counter_total:%s", fmt.Sprintf(LintErrMsgNoMetricType, "counter")),
+		},
+		{
+			name: "should not have special chars",
+			opts: prometheus.CounterOpts{
+				Name: "lint_:_total",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_:_total:%s", LintErrMsgNoReservedChars),
 		},
 	}
 
@@ -335,6 +358,17 @@ func TestLintGauge(t *testing.T) {
 				},
 			},
 			expectedResult: fmt.Sprintf("lint_gauge_numbers:%s", fmt.Sprintf(LintErrMsgNoMetricType, "gauge")),
+		},
+		{
+			name: "should not have special chars",
+			opts: prometheus.GaugeOpts{
+				Name: "lint_:_numbers",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_:_numbers:%s", LintErrMsgNoReservedChars),
 		},
 	}
 
@@ -475,6 +509,18 @@ func TestLintGaugeVector(t *testing.T) {
 			labelNames: []string{"lname1", "lname2"},
 			expectedResult: fmt.Sprintf("lint_gauge_numbers:%s", fmt.Sprintf(LintErrMsgNoMetricType, "gauge")),
 		},
+		{
+			name: "should not have special chars",
+			opts: prometheus.GaugeOpts{
+				Name: "lint_:_numbers",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_:_numbers:%s", LintErrMsgNoReservedChars),
+		},
 	}
 
 	for _, test := range tests {
@@ -558,6 +604,17 @@ func TestLintHistogram(t *testing.T) {
 				},
 			},
 			expectedResult: fmt.Sprintf("lint_histogram_seconds:%s", fmt.Sprintf(LintErrMsgNoMetricType, "histogram")),
+		},
+		{
+			name: "should not have special chars",
+			opts: prometheus.HistogramOpts{
+				Name: "lint_:_seconds",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_:_seconds:%s", LintErrMsgNoReservedChars),
 		},
 	}
 
@@ -649,6 +706,18 @@ func TestLintHistogramVector(t *testing.T) {
 			},
 			labelNames: []string{"lname1", "lname2"},
 			expectedResult: fmt.Sprintf("lint_histogram_seconds:%s", fmt.Sprintf(LintErrMsgNoMetricType, "histogram")),
+		},
+		{
+			name: "should not have special chars",
+			opts: prometheus.HistogramOpts{
+				Name: "lint_:_seconds",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_:_seconds:%s", LintErrMsgNoReservedChars),
 		},
 	}
 
@@ -744,6 +813,17 @@ func TestLintSummary(t *testing.T) {
 				},
 			},
 			expectedResult: fmt.Sprintf("lint_summary_seconds:%s", fmt.Sprintf(LintErrMsgNoMetricType, "summary")),
+		},
+		{
+			name: "should not have special chars",
+			opts: prometheus.SummaryOpts{
+				Name: "lint_:_seconds",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_:_seconds:%s", LintErrMsgNoReservedChars),
 		},
 	}
 
@@ -847,6 +927,18 @@ func TestLintSummaryVector(t *testing.T) {
 			},
 			labelNames: []string{"lname1", "lname2"},
 			expectedResult: fmt.Sprintf("lint_summary_seconds:%s", fmt.Sprintf(LintErrMsgNoMetricType, "summary")),
+		},
+		{
+			name: "should not have special chars",
+			opts: prometheus.SummaryOpts{
+				Name: "lint_:_seconds",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_:_seconds:%s", LintErrMsgNoReservedChars),
 		},
 	}
 
