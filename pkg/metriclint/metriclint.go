@@ -46,9 +46,14 @@ func LintCounter(counterOpts prometheus.CounterOpts) *LintResult {
 	}
 
 	result.Issues = append(result.Issues, commonLint(prometheus.Opts(counterOpts))...)
+
+	// lint names
 	result.Issues = append(result.Issues, lintNonHistogramNoBucket(result.MetricName)...)
 	result.Issues = append(result.Issues, lintNonHistogramSummaryNoCount(result.MetricName)...)
 	result.Issues = append(result.Issues, lintNonHistogramSummaryNoSum(result.MetricName)...)
+
+	// lint labels
+	result.Issues = append(result.Issues, lintNonHistogramNoLabelLe(counterOpts.ConstLabels, nil)...)
 
 	// TODO: delete me if no items below
 	result.Issues = append(result.Issues, lintCounterContainsTotal(result.MetricName)...)
@@ -59,6 +64,7 @@ func LintCounter(counterOpts prometheus.CounterOpts) *LintResult {
 func LintCounterVector(counterOpts prometheus.CounterOpts, labelNames []string) *LintResult {
 	result := LintCounter(counterOpts)
 	result.Issues = append(result.Issues, lintNonHistogramNoLabelLe(nil, labelNames)...)
+
 	result.Issues = append(result.Issues, lintNonSummaryNoLabelQuantile(nil, labelNames)...)
 	result.Issues = append(result.Issues, lintLabelNameCamelCase(nil, labelNames)...)
 
@@ -76,6 +82,9 @@ func LintGauge(gaugeOpts prometheus.GaugeOpts) *LintResult {
 	result.Issues = append(result.Issues, lintNonHistogramSummaryNoCount(result.MetricName)...)
 	result.Issues = append(result.Issues, lintNonHistogramSummaryNoSum(result.MetricName)...)
 
+	// lint labels
+	result.Issues = append(result.Issues, lintNonHistogramNoLabelLe(gaugeOpts.ConstLabels, nil)...)
+
 	return result
 }
 
@@ -83,6 +92,7 @@ func LintGaugeVector(gaugeOpts prometheus.GaugeOpts, labelNames []string) *LintR
 	result := LintGauge(gaugeOpts)
 
 	result.Issues = append(result.Issues, lintNonHistogramNoLabelLe(nil, labelNames)...)
+
 	result.Issues = append(result.Issues, lintNonSummaryNoLabelQuantile(nil, labelNames)...)
 	result.Issues = append(result.Issues, lintLabelNameCamelCase(nil, labelNames)...)
 
@@ -117,12 +127,16 @@ func LintSummary(summaryOpts prometheus.SummaryOpts) *LintResult {
 	result.Issues = append(result.Issues, lintNonCounterNoTotal(result.MetricName)...)
 	result.Issues = append(result.Issues, lintNonHistogramNoBucket(result.MetricName)...)
 
+	// lint labels
+	result.Issues = append(result.Issues, lintNonHistogramNoLabelLe(summaryOpts.ConstLabels, nil)...)
+
 	return result
 }
 
 func LintSummaryVector(summaryOpts prometheus.SummaryOpts, labelNames []string) *LintResult {
 	result := LintSummary(summaryOpts)
 	result.Issues = append(result.Issues, lintNonHistogramNoLabelLe(nil, labelNames)...)
+
 	result.Issues = append(result.Issues, lintLabelNameCamelCase(nil, labelNames)...)
 
 	return result

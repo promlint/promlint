@@ -122,6 +122,7 @@ const (
 	LintErrMsgNonHistogramShouldNotHaveBucketSuffix = `non-histogram metrics should not have "_bucket" suffix`
 	LintErrMsgNonHistogramSummaryShouldNotHaveCountSuffix = `non-histogram and non-summary metrics should not have "_count" suffix`
 	LintErrMsgMonHistogramSummaryShouldNotHaveSumSuffix = `non-histogram and non-summary metrics should not have "_sum" suffix`
+	LintErrMsgNonHistogramShouldNotHaveLeLabel = `non-histogram metrics should not have "le" label`
 )
 
 func lintHelp(help string) (issues []string) {
@@ -330,7 +331,7 @@ func commonLint(opts interface{}) (issues []string) {
 		issues = append(issues, lintNameCamelCase(counterOpts.Name)...)
 		issues = append(issues, lintUnitAbbreviations(counterOpts.Name)...)
 
-		issues = append(issues, lintNonHistogramNoLabelLe(counterOpts.ConstLabels, nil)...)
+
 		issues = append(issues, lintNonSummaryNoLabelQuantile(counterOpts.ConstLabels, nil)...)
 		issues = append(issues, lintLabelNameCamelCase(counterOpts.ConstLabels, nil)...)
 	case prometheus.GaugeOpts:
@@ -339,7 +340,6 @@ func commonLint(opts interface{}) (issues []string) {
 		issues = append(issues, lintReservedChars(gaugeOpts.Name)...)
 		issues = append(issues, lintNameCamelCase(gaugeOpts.Name)...)
 		issues = append(issues, lintUnitAbbreviations(gaugeOpts.Name)...)
-		issues = append(issues, lintNonHistogramNoLabelLe(gaugeOpts.ConstLabels, nil)...)
 		issues = append(issues, lintNonSummaryNoLabelQuantile(gaugeOpts.ConstLabels, nil)...)
 		issues = append(issues, lintLabelNameCamelCase(gaugeOpts.ConstLabels, nil)...)
 	case prometheus.HistogramOpts:
@@ -369,7 +369,6 @@ func commonLint(opts interface{}) (issues []string) {
 		issues = append(issues, lintReservedChars(fqName)...)
 		issues = append(issues, lintNameCamelCase(fqName)...)
 		issues = append(issues, lintUnitAbbreviations(fqName)...)
-		issues = append(issues, lintNonHistogramNoLabelLe(summaryOpts.ConstLabels, nil)...)
 		issues = append(issues, lintLabelNameCamelCase(summaryOpts.ConstLabels, nil)...)
 	default:
 		panic(fmt.Sprintf("unknow metric type: %T", opts))
