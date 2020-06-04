@@ -122,6 +122,26 @@ func lintHelp(help string) (issues []string) {
 	return
 }
 
+func hasTotalSuffix(name string) bool {
+	return strings.HasSuffix(name, "_total")
+}
+
+func lintCounterContainsTotal(name string) (issues []string) {
+	if !hasTotalSuffix(name) {
+		issues = append(issues, `counter metrics should have "_total" suffix`)
+	}
+
+	return issues
+}
+
+func lintNonCounterNoTotal(name string) (issues []string) {
+	if hasTotalSuffix(name) {
+		issues = append(issues, `counter metrics should not have "_total" suffix`)
+	}
+
+	return issues
+}
+
 // metricUnits attempts to detect known unit types used as part of a metric name,
 // e.g. "foo_bytes_total" or "bar_baz_milligrams".
 func getMetricUnit(m string) (unit string, base string, ok bool) {
@@ -271,6 +291,19 @@ func lintLabelNameCamelCase(constLabels prometheus.Labels, labelNames []string) 
 	return issues
 }
 
+// lintUnitAbbreviations detects abbreviated units in the metric name.
+// TODO(RainbowMango): It'd be better to return which abbreviated unit contains in name. Check with promlint guys.
+func lintUnitAbbreviations(name string) (issues []string) {
+	n := strings.ToLower(name)
+	for _, s := range unitAbbreviations {
+		if strings.Contains(n, "_"+s+"_") || strings.HasSuffix(n, "_"+s) {
+			issues = append(issues, "metric names should not contain abbreviated units")
+		}
+	}
+
+	return issues
+}
+
 func commonLint(opts interface{}) (issues []string) {
 	switch opts.(type) {
 	case prometheus.CounterOpts:
@@ -280,6 +313,7 @@ func commonLint(opts interface{}) (issues []string) {
 		issues = append(issues, lintReservedChars(counterOpts.Name)...)
 		issues = append(issues, lintMetricUnit(counterOpts.Name)...)
 		issues = append(issues, lintNameCamelCase(counterOpts.Name)...)
+		issues = append(issues, lintUnitAbbreviations(counterOpts.Name)...)
 		issues = append(issues, lintNonHistogramNoBucket(counterOpts.Name)...)
 		issues = append(issues, lintNonHistogramSummaryNoCount(counterOpts.Name)...)
 		issues = append(issues, lintNonHistogramSummaryNoSum(counterOpts.Name)...)
@@ -293,6 +327,7 @@ func commonLint(opts interface{}) (issues []string) {
 		issues = append(issues, lintReservedChars(gaugeOpts.Name)...)
 		issues = append(issues, lintMetricUnit(gaugeOpts.Name)...)
 		issues = append(issues, lintNameCamelCase(gaugeOpts.Name)...)
+		issues = append(issues, lintUnitAbbreviations(gaugeOpts.Name)...)
 		issues = append(issues, lintNonHistogramNoBucket(gaugeOpts.Name)...)
 		issues = append(issues, lintNonHistogramSummaryNoCount(gaugeOpts.Name)...)
 		issues = append(issues, lintNonHistogramSummaryNoSum(gaugeOpts.Name)...)
@@ -306,6 +341,7 @@ func commonLint(opts interface{}) (issues []string) {
 		issues = append(issues, lintReservedChars(histogramOpts.Name)...)
 		issues = append(issues, lintMetricUnit(histogramOpts.Name)...)
 		issues = append(issues, lintNameCamelCase(histogramOpts.Name)...)
+		issues = append(issues, lintUnitAbbreviations(histogramOpts.Name)...)
 		issues = append(issues, lintNonSummaryNoLabelQuantile(histogramOpts.ConstLabels, nil)...)
 		issues = append(issues, lintLabelNameCamelCase(histogramOpts.ConstLabels, nil)...)
 	case prometheus.SummaryOpts:
@@ -316,6 +352,7 @@ func commonLint(opts interface{}) (issues []string) {
 		issues = append(issues, lintMetricUnit(summaryOpts.Name)...)
 		issues = append(issues, lintNonHistogramNoBucket(summaryOpts.Name)...)
 		issues = append(issues, lintNameCamelCase(summaryOpts.Name)...)
+		issues = append(issues, lintUnitAbbreviations(summaryOpts.Name)...)
 		issues = append(issues, lintNonHistogramNoLabelLe(summaryOpts.ConstLabels, nil)...)
 		issues = append(issues, lintLabelNameCamelCase(summaryOpts.ConstLabels, nil)...)
 	default:
