@@ -18,6 +18,7 @@ package metriclint
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -103,6 +104,8 @@ var (
 		"d",
 	}
 )
+
+var camelCase = regexp.MustCompile(`[a-z][A-Z]`)
 
 const (
 	NameSuffixSum = "_sum"
@@ -243,6 +246,31 @@ func lintReservedChars(name string) (issues []string) {
 	return issues
 }
 
+func lintNameCamelCase(name string) (issues []string) {
+	if camelCase.FindString(name) != "" {
+		issues = append(issues, "metric names should be written in 'snake_case' not 'camelCase'")
+	}
+
+	return issues
+}
+
+// TODO(RainbowMango): Should check label value?
+func lintLabelNameCamelCase(constLabels prometheus.Labels, labelNames []string) (issues []string) {
+	for ln, _ := range constLabels {
+		if camelCase.FindString(ln) != "" {
+			issues = append(issues, "label names should be written in 'snake_case' not 'camelCase'")
+		}
+	}
+
+	for _, ln := range labelNames {
+		if camelCase.FindString(ln) != "" {
+			issues = append(issues, "label names should be written in 'snake_case' not 'camelCase'")
+		}
+	}
+
+	return issues
+}
+
 func commonLint(opts interface{}) (issues []string) {
 	switch opts.(type) {
 	case prometheus.CounterOpts:
@@ -251,29 +279,35 @@ func commonLint(opts interface{}) (issues []string) {
 		issues = append(issues, lintNoMetricTypeInName(counterOpts.Name)...)
 		issues = append(issues, lintReservedChars(counterOpts.Name)...)
 		issues = append(issues, lintMetricUnit(counterOpts.Name)...)
+		issues = append(issues, lintNameCamelCase(counterOpts.Name)...)
 		issues = append(issues, lintNonHistogramNoBucket(counterOpts.Name)...)
 		issues = append(issues, lintNonHistogramSummaryNoCount(counterOpts.Name)...)
 		issues = append(issues, lintNonHistogramSummaryNoSum(counterOpts.Name)...)
 		issues = append(issues, lintNonHistogramNoLabelLe(counterOpts.ConstLabels, nil)...)
 		issues = append(issues, lintNonSummaryNoLabelQuantile(counterOpts.ConstLabels, nil)...)
+		issues = append(issues, lintLabelNameCamelCase(counterOpts.ConstLabels, nil)...)
 	case prometheus.GaugeOpts:
 		gaugeOpts := opts.(prometheus.GaugeOpts)
 		issues = append(issues, lintHelp(gaugeOpts.Help)...)
 		issues = append(issues, lintNoMetricTypeInName(gaugeOpts.Name)...)
 		issues = append(issues, lintReservedChars(gaugeOpts.Name)...)
 		issues = append(issues, lintMetricUnit(gaugeOpts.Name)...)
+		issues = append(issues, lintNameCamelCase(gaugeOpts.Name)...)
 		issues = append(issues, lintNonHistogramNoBucket(gaugeOpts.Name)...)
 		issues = append(issues, lintNonHistogramSummaryNoCount(gaugeOpts.Name)...)
 		issues = append(issues, lintNonHistogramSummaryNoSum(gaugeOpts.Name)...)
 		issues = append(issues, lintNonHistogramNoLabelLe(gaugeOpts.ConstLabels, nil)...)
 		issues = append(issues, lintNonSummaryNoLabelQuantile(gaugeOpts.ConstLabels, nil)...)
+		issues = append(issues, lintLabelNameCamelCase(gaugeOpts.ConstLabels, nil)...)
 	case prometheus.HistogramOpts:
 		histogramOpts := opts.(prometheus.HistogramOpts)
 		issues = append(issues, lintHelp(histogramOpts.Help)...)
 		issues = append(issues, lintNoMetricTypeInName(histogramOpts.Name)...)
 		issues = append(issues, lintReservedChars(histogramOpts.Name)...)
 		issues = append(issues, lintMetricUnit(histogramOpts.Name)...)
+		issues = append(issues, lintNameCamelCase(histogramOpts.Name)...)
 		issues = append(issues, lintNonSummaryNoLabelQuantile(histogramOpts.ConstLabels, nil)...)
+		issues = append(issues, lintLabelNameCamelCase(histogramOpts.ConstLabels, nil)...)
 	case prometheus.SummaryOpts:
 		summaryOpts := opts.(prometheus.SummaryOpts)
 		issues = append(issues, lintHelp(summaryOpts.Help)...)
@@ -281,7 +315,9 @@ func commonLint(opts interface{}) (issues []string) {
 		issues = append(issues, lintReservedChars(summaryOpts.Name)...)
 		issues = append(issues, lintMetricUnit(summaryOpts.Name)...)
 		issues = append(issues, lintNonHistogramNoBucket(summaryOpts.Name)...)
+		issues = append(issues, lintNameCamelCase(summaryOpts.Name)...)
 		issues = append(issues, lintNonHistogramNoLabelLe(summaryOpts.ConstLabels, nil)...)
+		issues = append(issues, lintLabelNameCamelCase(summaryOpts.ConstLabels, nil)...)
 	default:
 		panic("unknown metric type")
 	}

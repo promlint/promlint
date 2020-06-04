@@ -42,6 +42,7 @@ func LintCounterVector(counterOpts prometheus.CounterOpts, labelNames []string) 
 	result := LintCounter(counterOpts)
 	result.Issues = append(result.Issues, lintNonHistogramNoLabelLe(nil, labelNames)...)
 	result.Issues = append(result.Issues, lintNonSummaryNoLabelQuantile(nil, labelNames)...)
+	result.Issues = append(result.Issues, lintLabelNameCamelCase(nil, labelNames)...)
 
 	return result
 }
@@ -61,6 +62,7 @@ func LintGaugeVector(gaugeOpts prometheus.GaugeOpts, labelNames []string) *LintR
 	result := LintGauge(gaugeOpts)
 	result.Issues = append(result.Issues, lintNonHistogramNoLabelLe(nil, labelNames)...)
 	result.Issues = append(result.Issues, lintNonSummaryNoLabelQuantile(nil, labelNames)...)
+	result.Issues = append(result.Issues, lintLabelNameCamelCase(nil, labelNames)...)
 
 	return result
 }
@@ -79,6 +81,7 @@ func LintHistogram(histogramOpts prometheus.HistogramOpts) *LintResult {
 func LintHistogramVector(histogramOpts prometheus.HistogramOpts, labelNames []string) *LintResult {
 	result := LintHistogram(histogramOpts)
 	result.Issues = append(result.Issues, lintNonSummaryNoLabelQuantile(nil, labelNames)...)
+	result.Issues = append(result.Issues, lintLabelNameCamelCase(nil, labelNames)...)
 
 	return result
 }
@@ -97,6 +100,7 @@ func LintSummary(summaryOpts prometheus.SummaryOpts) *LintResult {
 func LintSummaryVector(summaryOpts prometheus.SummaryOpts, labelNames []string) *LintResult {
 	result := LintSummary(summaryOpts)
 	result.Issues = append(result.Issues, lintNonHistogramNoLabelLe(nil, labelNames)...)
+	result.Issues = append(result.Issues, lintLabelNameCamelCase(nil, labelNames)...)
 
 	return result
 }
