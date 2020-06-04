@@ -116,6 +116,7 @@ const (
 
 const (
 	LintErrMsgNoHelp = "no help text"
+	LintErrMsgNonBaseUnit = `use base unit "%s" instead of "%s"`
 )
 
 func lintHelp(help string) (issues []string) {
@@ -312,14 +313,15 @@ func commonLint(opts interface{}) (issues []string) {
 	switch opts.(type) {
 	case prometheus.Opts: // prometheus.CounterOpts and prometheus.GaugeOpts share the type.
 		counterGagueOpts := opts.(prometheus.Opts)
-		issues = append(issues, lintHelp(counterGagueOpts.Help)...)
+		fqName := prometheus.BuildFQName(counterGagueOpts.Namespace, counterGagueOpts.Subsystem, counterGagueOpts.Name)
+
+		issues = append(issues, lintHelp(counterGagueOpts.Help)...) // metrics should contains help.
+		issues = append(issues, lintMetricUnit(fqName)...) // name should use standard units.
 
 	case prometheus.CounterOpts:
 		counterOpts := opts.(prometheus.CounterOpts)
-		issues = append(issues, lintHelp(counterOpts.Help)...)
 		issues = append(issues, lintNoMetricTypeInName(counterOpts.Name)...)
 		issues = append(issues, lintReservedChars(counterOpts.Name)...)
-		issues = append(issues, lintMetricUnit(counterOpts.Name)...)
 		issues = append(issues, lintNameCamelCase(counterOpts.Name)...)
 		issues = append(issues, lintUnitAbbreviations(counterOpts.Name)...)
 		issues = append(issues, lintNonHistogramNoBucket(counterOpts.Name)...)
@@ -344,23 +346,32 @@ func commonLint(opts interface{}) (issues []string) {
 		issues = append(issues, lintLabelNameCamelCase(gaugeOpts.ConstLabels, nil)...)
 	case prometheus.HistogramOpts:
 		histogramOpts := opts.(prometheus.HistogramOpts)
+		fqName := prometheus.BuildFQName(histogramOpts.Namespace, histogramOpts.Subsystem, histogramOpts.Name)
+
 		issues = append(issues, lintHelp(histogramOpts.Help)...)
-		issues = append(issues, lintNoMetricTypeInName(histogramOpts.Name)...)
-		issues = append(issues, lintReservedChars(histogramOpts.Name)...)
-		issues = append(issues, lintMetricUnit(histogramOpts.Name)...)
-		issues = append(issues, lintNameCamelCase(histogramOpts.Name)...)
-		issues = append(issues, lintUnitAbbreviations(histogramOpts.Name)...)
+		issues = append(issues, lintMetricUnit(fqName)...)
+
+		// TODO: delete me if no items below
+		issues = append(issues, lintNoMetricTypeInName(fqName)...)
+		issues = append(issues, lintReservedChars(fqName)...)
+		issues = append(issues, lintNameCamelCase(fqName)...)
+		issues = append(issues, lintUnitAbbreviations(fqName)...)
+
 		issues = append(issues, lintNonSummaryNoLabelQuantile(histogramOpts.ConstLabels, nil)...)
 		issues = append(issues, lintLabelNameCamelCase(histogramOpts.ConstLabels, nil)...)
 	case prometheus.SummaryOpts:
 		summaryOpts := opts.(prometheus.SummaryOpts)
+		fqName := prometheus.BuildFQName(summaryOpts.Namespace, summaryOpts.Subsystem, summaryOpts.Name)
+
 		issues = append(issues, lintHelp(summaryOpts.Help)...)
-		issues = append(issues, lintNoMetricTypeInName(summaryOpts.Name)...)
-		issues = append(issues, lintReservedChars(summaryOpts.Name)...)
-		issues = append(issues, lintMetricUnit(summaryOpts.Name)...)
-		issues = append(issues, lintNonHistogramNoBucket(summaryOpts.Name)...)
-		issues = append(issues, lintNameCamelCase(summaryOpts.Name)...)
-		issues = append(issues, lintUnitAbbreviations(summaryOpts.Name)...)
+		issues = append(issues, lintMetricUnit(fqName)...)
+
+		// TODO: delete me if no items below
+		issues = append(issues, lintNoMetricTypeInName(fqName)...)
+		issues = append(issues, lintReservedChars(fqName)...)
+		issues = append(issues, lintNonHistogramNoBucket(fqName)...)
+		issues = append(issues, lintNameCamelCase(fqName)...)
+		issues = append(issues, lintUnitAbbreviations(fqName)...)
 		issues = append(issues, lintNonHistogramNoLabelLe(summaryOpts.ConstLabels, nil)...)
 		issues = append(issues, lintLabelNameCamelCase(summaryOpts.ConstLabels, nil)...)
 	default:

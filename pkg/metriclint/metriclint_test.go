@@ -50,6 +50,17 @@ func TestLintCounter(t *testing.T) {
 			},
 			expectedResult: fmt.Sprintf("lint_test_total:%s", LintErrMsgNoHelp),
 		},
+		{
+			name: "should use base unit",
+			opts: prometheus.CounterOpts{
+				Name: "lint_test_hours_total",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_test_hours_total:%s", fmt.Sprintf(LintErrMsgNonBaseUnit, "seconds", "hours")),
+		},
 	}
 
 	for _, test := range tests {
@@ -93,6 +104,18 @@ func TestLintCounterVector(t *testing.T) {
 			labelNames: []string{"lname1", "lname2"},
 			expectedResult: fmt.Sprintf("lint_test_total:%s", LintErrMsgNoHelp),
 		},
+		{
+			name: "should use base unit",
+			opts: prometheus.CounterOpts{
+				Name: "lint_test_hours_total",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_test_hours_total:%s", fmt.Sprintf(LintErrMsgNonBaseUnit, "seconds", "hours")),
+		},
 	}
 
 	for _, test := range tests {
@@ -132,6 +155,17 @@ func TestLintGauge(t *testing.T) {
 				},
 			},
 			expectedResult: fmt.Sprintf("lint_test_numbers:%s", LintErrMsgNoHelp),
+		},
+		{
+			name: "should use base unit",
+			opts: prometheus.GaugeOpts{
+				Name: "lint_test_hours_numbers",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_test_hours_numbers:%s", fmt.Sprintf(LintErrMsgNonBaseUnit, "seconds", "hours")),
 		},
 	}
 
@@ -176,6 +210,18 @@ func TestLintGaugeVector(t *testing.T) {
 			labelNames: []string{"lname1", "lname2"},
 			expectedResult: fmt.Sprintf("lint_test_numbers:%s", LintErrMsgNoHelp),
 		},
+		{
+			name: "should use base unit",
+			opts: prometheus.GaugeOpts{
+				Name: "lint_test_hours_numbers",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_test_hours_numbers:%s", fmt.Sprintf(LintErrMsgNonBaseUnit, "seconds", "hours")),
+		},
 	}
 
 	for _, test := range tests {
@@ -215,6 +261,17 @@ func TestLintHistogram(t *testing.T) {
 				},
 			},
 			expectedResult: fmt.Sprintf("lint_test_seconds:%s", LintErrMsgNoHelp),
+		},
+		{
+			name: "should use base unit",
+			opts: prometheus.HistogramOpts{
+				Name: "lint_test_hours_seconds",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_test_hours_seconds:%s", fmt.Sprintf(LintErrMsgNonBaseUnit, "seconds", "hours")),
 		},
 	}
 
@@ -259,6 +316,18 @@ func TestLintHistogramVector(t *testing.T) {
 			labelNames: []string{"lname1", "lname2"},
 			expectedResult: fmt.Sprintf("lint_test_seconds:%s", LintErrMsgNoHelp),
 		},
+		{
+			name: "should use base unit",
+			opts: prometheus.HistogramOpts{
+				Name: "lint_test_hours_seconds",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_test_hours_seconds:%s", fmt.Sprintf(LintErrMsgNonBaseUnit, "seconds", "hours")),
+		},
 	}
 
 	for _, test := range tests {
@@ -298,6 +367,17 @@ func TestLintSummary(t *testing.T) {
 				},
 			},
 			expectedResult: fmt.Sprintf("lint_test_seconds:%s", LintErrMsgNoHelp),
+		},
+		{
+			name: "should use base unit",
+			opts: prometheus.SummaryOpts{
+				Name: "lint_test_hours_seconds",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_test_hours_seconds:%s", fmt.Sprintf(LintErrMsgNonBaseUnit, "seconds", "hours")),
 		},
 	}
 
@@ -341,6 +421,18 @@ func TestLintSummaryVector(t *testing.T) {
 			},
 			labelNames: []string{"lname1", "lname2"},
 			expectedResult: fmt.Sprintf("lint_test_seconds:%s", LintErrMsgNoHelp),
+		},
+		{
+			name: "should use base unit",
+			opts: prometheus.SummaryOpts{
+				Name: "lint_test_hours_seconds",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_test_hours_seconds:%s", fmt.Sprintf(LintErrMsgNonBaseUnit, "seconds", "hours")),
 		},
 	}
 
