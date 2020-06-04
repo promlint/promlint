@@ -114,6 +114,10 @@ const (
 	LabelQuantile = "quantile"
 )
 
+const (
+	LintErrMsgNoHelp = "no help text"
+)
+
 func lintHelp(help string) (issues []string) {
 	if len(help) == 0 {
 		issues = append(issues, "no help text")
@@ -306,6 +310,10 @@ func lintUnitAbbreviations(name string) (issues []string) {
 
 func commonLint(opts interface{}) (issues []string) {
 	switch opts.(type) {
+	case prometheus.Opts: // prometheus.CounterOpts and prometheus.GaugeOpts share the type.
+		counterGagueOpts := opts.(prometheus.Opts)
+		issues = append(issues, lintHelp(counterGagueOpts.Help)...)
+
 	case prometheus.CounterOpts:
 		counterOpts := opts.(prometheus.CounterOpts)
 		issues = append(issues, lintHelp(counterOpts.Help)...)
@@ -356,7 +364,7 @@ func commonLint(opts interface{}) (issues []string) {
 		issues = append(issues, lintNonHistogramNoLabelLe(summaryOpts.ConstLabels, nil)...)
 		issues = append(issues, lintLabelNameCamelCase(summaryOpts.ConstLabels, nil)...)
 	default:
-		panic("unknown metric type")
+		panic(fmt.Sprintf("unknow metric type: %T", opts))
 	}
 
 	return issues

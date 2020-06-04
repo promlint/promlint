@@ -14,9 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+// Package metriclint provides a serials functions to lint a metric.
+// The implementation base on [promlint](github.com/prometheus/client_golang/prometheus/testutil/promlint).
+//
+// metriclint provides a ability to lint a metric at the registry which is different with promlint.
+// The lint rules also base on promlint but we may add more rules if necessary.
 package metriclint
 
-import "github.com/prometheus/client_golang/prometheus"
+import (
+	"strings"
+
+	"github.com/prometheus/client_golang/prometheus"
+)
 
 // LintResult represents lint result of a specific metric.
 type LintResult struct {
@@ -25,6 +34,10 @@ type LintResult struct {
 
 	// one or more lint errors of the metric.
 	Issues []string
+}
+
+func (lr *LintResult) String() string {
+	return lr.MetricName + ":" + strings.Join(lr.Issues, ",")
 }
 
 func LintCounter(counterOpts prometheus.CounterOpts) *LintResult {
