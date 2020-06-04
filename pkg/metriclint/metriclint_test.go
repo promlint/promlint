@@ -23,58 +23,249 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
-const (
-	metricTypeCounter = "Counter"
-	metricTypeCounterVec = "CounterVec"
-	metricTypeGauge = "Gauge"
-	metricTypeGaugeVec = "GaugeVec"
-	metricTypeHistogram = "Histogram"
-	metricTypeHistogramVec = "HistogramVec"
-	metricTypeSummary = "Summary"
-	metricTypeSummaryVec = "SummaryVec"
-)
-
-func TestNoHelpText(t *testing.T) {
-	tests := []struct{
+func TestLintCounter(t *testing.T) {
+	tests := []struct {
 		name string
-		metricType string
-		opts interface{}
-		labelNames []string
-		expected string
+		opts prometheus.CounterOpts
+		expectedResult string
 	}{
 		{
-			name: "counter metric no help",
-			metricType: metricTypeCounter,
+			name: "valid counter",
 			opts: prometheus.CounterOpts{
-				Name: "metriclint_test_total",
+				Name: "lint_test_total",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
 			},
-			expected: fmt.Sprintf("metriclint_test_total:%s", LintErrMsgNoHelp),
-		},
-		{
-			name: "counter vector metric no help",
-			metricType: metricTypeCounterVec,
-			opts: prometheus.CounterOpts{
-				Name: "metriclint_test_total",
-			},
-			labelNames: []string{"label1", "label2", "label3"},
-			expected: fmt.Sprintf("metriclint_test_total:%s", LintErrMsgNoHelp),
+			expectedResult: fmt.Sprintf("lint_test_total:"),
 		},
 	}
 
 	for _, test := range tests {
 		tc := test
 		t.Run(tc.name, func(t *testing.T) {
-			var lintResult *LintResult
-
-			switch tc.metricType{
-			case metricTypeCounter:
-				lintResult = LintCounter(tc.opts.(prometheus.CounterOpts))
-			case metricTypeCounterVec:
-				lintResult = LintCounterVector(tc.opts.(prometheus.CounterOpts), tc.labelNames)
+			lintResult := LintCounter(tc.opts)
+			if tc.expectedResult != lintResult.String() {
+				t.Errorf("expected: %s, but got: %s", tc.expectedResult, lintResult.String())
 			}
+		})
+	}
+}
 
-			if lintResult.String() != tc.expected {
-				t.Errorf("expected %s, but got %s", tc.expected, lintResult.String())
+func TestLintCounterVector(t *testing.T) {
+	tests := []struct {
+		name string
+		opts prometheus.CounterOpts
+		labelNames []string
+		expectedResult string
+	}{
+		{
+			name: "valid counter vector",
+			opts: prometheus.CounterOpts{
+				Name: "lint_test_total",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_test_total:"),
+		},
+	}
+
+	for _, test := range tests {
+		tc := test
+		t.Run(tc.name, func(t *testing.T) {
+			lintResult := LintCounterVector(tc.opts, tc.labelNames)
+			if tc.expectedResult != lintResult.String() {
+				t.Errorf("expected: %s, but got: %s", tc.expectedResult, lintResult.String())
+			}
+		})
+	}
+}
+
+func TestLintGauge(t *testing.T) {
+	tests := []struct {
+		name string
+		opts prometheus.GaugeOpts
+		expectedResult string
+	}{
+		{
+			name: "valid gauge",
+			opts: prometheus.GaugeOpts{
+				Name: "lint_test_numbers",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_test_numbers:"),
+		},
+	}
+
+	for _, test := range tests {
+		tc := test
+		t.Run(tc.name, func(t *testing.T) {
+			lintResult := LintGauge(tc.opts)
+			if tc.expectedResult != lintResult.String() {
+				t.Errorf("expected: %s, but got: %s", tc.expectedResult, lintResult.String())
+			}
+		})
+	}
+}
+
+func TestLintGaugeVector(t *testing.T) {
+	tests := []struct {
+		name string
+		opts prometheus.GaugeOpts
+		labelNames []string
+		expectedResult string
+	}{
+		{
+			name: "valid gauge vector",
+			opts: prometheus.GaugeOpts{
+				Name: "lint_test_numbers",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_test_numbers:"),
+		},
+	}
+
+	for _, test := range tests {
+		tc := test
+		t.Run(tc.name, func(t *testing.T) {
+			lintResult := LintGaugeVector(tc.opts, tc.labelNames)
+			if tc.expectedResult != lintResult.String() {
+				t.Errorf("expected: %s, but got: %s", tc.expectedResult, lintResult.String())
+			}
+		})
+	}
+}
+
+func TestLintHistogram(t *testing.T) {
+	tests := []struct {
+		name string
+		opts prometheus.HistogramOpts
+		expectedResult string
+	}{
+		{
+			name: "valid histogram",
+			opts: prometheus.HistogramOpts{
+				Name: "lint_test_seconds",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_test_seconds:"),
+		},
+	}
+
+	for _, test := range tests {
+		tc := test
+		t.Run(tc.name, func(t *testing.T) {
+			lintResult := LintHistogram(tc.opts)
+			if tc.expectedResult != lintResult.String() {
+				t.Errorf("expected: %s, but got: %s", tc.expectedResult, lintResult.String())
+			}
+		})
+	}
+}
+
+func TestLintHistogramVector(t *testing.T) {
+	tests := []struct {
+		name string
+		opts prometheus.HistogramOpts
+		labelNames []string
+		expectedResult string
+	}{
+		{
+			name: "valid histogram",
+			opts: prometheus.HistogramOpts{
+				Name: "lint_test_seconds",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_test_seconds:"),
+		},
+	}
+
+	for _, test := range tests {
+		tc := test
+		t.Run(tc.name, func(t *testing.T) {
+			lintResult := LintHistogramVector(tc.opts, tc.labelNames)
+			if tc.expectedResult != lintResult.String() {
+				t.Errorf("expected: %s, but got: %s", tc.expectedResult, lintResult.String())
+			}
+		})
+	}
+}
+
+func TestLintSummary(t *testing.T) {
+	tests := []struct {
+		name string
+		opts prometheus.SummaryOpts
+		expectedResult string
+	}{
+		{
+			name: "valid histogram",
+			opts: prometheus.SummaryOpts{
+				Name: "lint_test_seconds",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_test_seconds:"),
+		},
+	}
+
+	for _, test := range tests {
+		tc := test
+		t.Run(tc.name, func(t *testing.T) {
+			lintResult := LintSummary(tc.opts)
+			if tc.expectedResult != lintResult.String() {
+				t.Errorf("expected: %s, but got: %s", tc.expectedResult, lintResult.String())
+			}
+		})
+	}
+}
+
+func TestLintSummaryVector(t *testing.T) {
+	tests := []struct {
+		name string
+		opts prometheus.SummaryOpts
+		labelNames []string
+		expectedResult string
+	}{
+		{
+			name: "valid histogram",
+			opts: prometheus.SummaryOpts{
+				Name: "lint_test_seconds",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"lname1", "lname2"},
+			expectedResult: fmt.Sprintf("lint_test_seconds:"),
+		},
+	}
+
+	for _, test := range tests {
+		tc := test
+		t.Run(tc.name, func(t *testing.T) {
+			lintResult := LintSummaryVector(tc.opts, tc.labelNames)
+			if tc.expectedResult != lintResult.String() {
+				t.Errorf("expected: %s, but got: %s", tc.expectedResult, lintResult.String())
 			}
 		})
 	}
