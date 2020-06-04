@@ -265,13 +265,13 @@ func TestLintHistogram(t *testing.T) {
 		{
 			name: "should use base unit",
 			opts: prometheus.HistogramOpts{
-				Name: "lint_test_hours_seconds",
+				Name: "lint_test_hours",
 				Help: "this is help message",
 				ConstLabels: prometheus.Labels{
 					"lname": "lvalue",
 				},
 			},
-			expectedResult: fmt.Sprintf("lint_test_hours_seconds:%s", fmt.Sprintf(LintErrMsgNonBaseUnit, "seconds", "hours")),
+			expectedResult: fmt.Sprintf("lint_test_hours:%s", fmt.Sprintf(LintErrMsgNonBaseUnit, "seconds", "hours")),
 		},
 	}
 
@@ -319,14 +319,14 @@ func TestLintHistogramVector(t *testing.T) {
 		{
 			name: "should use base unit",
 			opts: prometheus.HistogramOpts{
-				Name: "lint_test_hours_seconds",
+				Name: "lint_test_hours",
 				Help: "this is help message",
 				ConstLabels: prometheus.Labels{
 					"lname": "lvalue",
 				},
 			},
 			labelNames: []string{"lname1", "lname2"},
-			expectedResult: fmt.Sprintf("lint_test_hours_seconds:%s", fmt.Sprintf(LintErrMsgNonBaseUnit, "seconds", "hours")),
+			expectedResult: fmt.Sprintf("lint_test_hours:%s", fmt.Sprintf(LintErrMsgNonBaseUnit, "seconds", "hours")),
 		},
 	}
 
@@ -371,13 +371,13 @@ func TestLintSummary(t *testing.T) {
 		{
 			name: "should use base unit",
 			opts: prometheus.SummaryOpts{
-				Name: "lint_test_hours_seconds",
+				Name: "lint_test_hours",
 				Help: "this is help message",
 				ConstLabels: prometheus.Labels{
 					"lname": "lvalue",
 				},
 			},
-			expectedResult: fmt.Sprintf("lint_test_hours_seconds:%s", fmt.Sprintf(LintErrMsgNonBaseUnit, "seconds", "hours")),
+			expectedResult: fmt.Sprintf("lint_test_hours:%s", fmt.Sprintf(LintErrMsgNonBaseUnit, "seconds", "hours")),
 		},
 	}
 
@@ -425,14 +425,14 @@ func TestLintSummaryVector(t *testing.T) {
 		{
 			name: "should use base unit",
 			opts: prometheus.SummaryOpts{
-				Name: "lint_test_hours_seconds",
+				Name: "lint_test_hours",
 				Help: "this is help message",
 				ConstLabels: prometheus.Labels{
 					"lname": "lvalue",
 				},
 			},
 			labelNames: []string{"lname1", "lname2"},
-			expectedResult: fmt.Sprintf("lint_test_hours_seconds:%s", fmt.Sprintf(LintErrMsgNonBaseUnit, "seconds", "hours")),
+			expectedResult: fmt.Sprintf("lint_test_hours:%s", fmt.Sprintf(LintErrMsgNonBaseUnit, "seconds", "hours")),
 		},
 	}
 
