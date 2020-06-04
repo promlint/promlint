@@ -83,6 +83,17 @@ func TestLintCounter(t *testing.T) {
 			},
 			expectedResult: fmt.Sprintf("lint_test_total:%s", LintErrMsgNonHistogramShouldNotHaveLeLabel),
 		},
+		{
+			name: "non summary should not have quantile label",
+			opts: prometheus.CounterOpts{
+				Name: "lint_test_total",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"quantile": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_test_total:%s", LintErrMsgNonSummaryShouldNotHaveQuantileLabel),
+		},
 	}
 
 	for _, test := range tests {
@@ -161,6 +172,18 @@ func TestLintCounterVector(t *testing.T) {
 			},
 			labelNames: []string{"le", "lname2"},
 			expectedResult: fmt.Sprintf("lint_test_total:%s", LintErrMsgNonHistogramShouldNotHaveLeLabel),
+		},
+		{
+			name: "non summary should not have quantile label",
+			opts: prometheus.CounterOpts{
+				Name: "lint_test_total",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"quantile", "lname2"},
+			expectedResult: fmt.Sprintf("lint_test_total:%s", LintErrMsgNonSummaryShouldNotHaveQuantileLabel),
 		},
 	}
 
@@ -267,6 +290,17 @@ func TestLintGauge(t *testing.T) {
 				},
 			},
 			expectedResult: fmt.Sprintf("lint_test_numbers:%s", LintErrMsgNonHistogramShouldNotHaveLeLabel),
+		},
+		{
+			name: "non summary should not have quantile label",
+			opts: prometheus.GaugeOpts{
+				Name: "lint_test_numbers",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"quantile": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_test_numbers:%s", LintErrMsgNonSummaryShouldNotHaveQuantileLabel),
 		},
 	}
 
@@ -383,6 +417,18 @@ func TestLintGaugeVector(t *testing.T) {
 			labelNames: []string{"le", "lname2"},
 			expectedResult: fmt.Sprintf("lint_test_numbers:%s", LintErrMsgNonHistogramShouldNotHaveLeLabel),
 		},
+		{
+			name: "non summary should not have quantile label",
+			opts: prometheus.GaugeOpts{
+				Name: "lint_test_numbers",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"quantile", "lname2"},
+			expectedResult: fmt.Sprintf("lint_test_numbers:%s", LintErrMsgNonSummaryShouldNotHaveQuantileLabel),
+		},
 	}
 
 	for _, test := range tests {
@@ -444,6 +490,17 @@ func TestLintHistogram(t *testing.T) {
 				},
 			},
 			expectedResult: fmt.Sprintf("lint_test_total:%s", LintErrMsgNonCounterShouldNotHaveTotalSuffix),
+		},
+		{
+			name: "non summary should not have quantile label",
+			opts: prometheus.HistogramOpts{
+				Name: "lint_test_seconds",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"quantile": "lvalue",
+				},
+			},
+			expectedResult: fmt.Sprintf("lint_test_seconds:%s", LintErrMsgNonSummaryShouldNotHaveQuantileLabel),
 		},
 	}
 
@@ -511,6 +568,18 @@ func TestLintHistogramVector(t *testing.T) {
 			},
 			labelNames: []string{"lname1", "lname2"},
 			expectedResult: fmt.Sprintf("lint_test_total:%s", LintErrMsgNonCounterShouldNotHaveTotalSuffix),
+		},
+		{
+			name: "non summary should not have quantile label",
+			opts: prometheus.HistogramOpts{
+				Name: "lint_test_seconds",
+				Help: "this is help message",
+				ConstLabels: prometheus.Labels{
+					"lname": "lvalue",
+				},
+			},
+			labelNames: []string{"quantile", "lname2"},
+			expectedResult: fmt.Sprintf("lint_test_seconds:%s", LintErrMsgNonSummaryShouldNotHaveQuantileLabel),
 		},
 	}
 

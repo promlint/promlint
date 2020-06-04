@@ -123,6 +123,7 @@ const (
 	LintErrMsgNonHistogramSummaryShouldNotHaveCountSuffix = `non-histogram and non-summary metrics should not have "_count" suffix`
 	LintErrMsgMonHistogramSummaryShouldNotHaveSumSuffix = `non-histogram and non-summary metrics should not have "_sum" suffix`
 	LintErrMsgNonHistogramShouldNotHaveLeLabel = `non-histogram metrics should not have "le" label`
+	LintErrMsgNonSummaryShouldNotHaveQuantileLabel = `non-summary metrics should not have "quantile" label`
 )
 
 func lintHelp(help string) (issues []string) {
@@ -245,7 +246,13 @@ func lintNonHistogramNoLabelLe(constLabels prometheus.Labels, labelNames []strin
 func lintNonSummaryNoLabelQuantile(constLabels prometheus.Labels, labelNames []string) (issues []string) {
 	for ln, _ := range constLabels {
 		if ln == LabelQuantile {
-			issues = append(issues, `non-summary metrics should not have "quantile" label`)
+			issues = append(issues, LintErrMsgNonSummaryShouldNotHaveQuantileLabel)
+		}
+	}
+
+	for _, ln := range labelNames {
+		if ln == LabelQuantile {
+			issues = append(issues, LintErrMsgNonSummaryShouldNotHaveQuantileLabel)
 		}
 	}
 
@@ -332,7 +339,6 @@ func commonLint(opts interface{}) (issues []string) {
 		issues = append(issues, lintUnitAbbreviations(counterOpts.Name)...)
 
 
-		issues = append(issues, lintNonSummaryNoLabelQuantile(counterOpts.ConstLabels, nil)...)
 		issues = append(issues, lintLabelNameCamelCase(counterOpts.ConstLabels, nil)...)
 	case prometheus.GaugeOpts:
 		gaugeOpts := opts.(prometheus.GaugeOpts)
@@ -340,7 +346,6 @@ func commonLint(opts interface{}) (issues []string) {
 		issues = append(issues, lintReservedChars(gaugeOpts.Name)...)
 		issues = append(issues, lintNameCamelCase(gaugeOpts.Name)...)
 		issues = append(issues, lintUnitAbbreviations(gaugeOpts.Name)...)
-		issues = append(issues, lintNonSummaryNoLabelQuantile(gaugeOpts.ConstLabels, nil)...)
 		issues = append(issues, lintLabelNameCamelCase(gaugeOpts.ConstLabels, nil)...)
 	case prometheus.HistogramOpts:
 		histogramOpts := opts.(prometheus.HistogramOpts)
@@ -355,7 +360,6 @@ func commonLint(opts interface{}) (issues []string) {
 		issues = append(issues, lintNameCamelCase(fqName)...)
 		issues = append(issues, lintUnitAbbreviations(fqName)...)
 
-		issues = append(issues, lintNonSummaryNoLabelQuantile(histogramOpts.ConstLabels, nil)...)
 		issues = append(issues, lintLabelNameCamelCase(histogramOpts.ConstLabels, nil)...)
 	case prometheus.SummaryOpts:
 		summaryOpts := opts.(prometheus.SummaryOpts)
