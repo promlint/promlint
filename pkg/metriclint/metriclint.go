@@ -51,14 +51,12 @@ func LintCounter(counterOpts prometheus.CounterOpts) *LintResult {
 	result.Issues = append(result.Issues, lintNonHistogramNoBucket(result.MetricName)...)
 	result.Issues = append(result.Issues, lintNonHistogramSummaryNoCount(result.MetricName)...)
 	result.Issues = append(result.Issues, lintNonHistogramSummaryNoSum(result.MetricName)...)
+	result.Issues = append(result.Issues, lintCounterContainsTotal(result.MetricName)...)
 
 	// lint labels
 	result.Issues = append(result.Issues, lintNonHistogramNoLabelLe(counterOpts.ConstLabels, nil)...)
 	result.Issues = append(result.Issues, lintNonSummaryNoLabelQuantile(counterOpts.ConstLabels, nil)...)
 	result.Issues = append(result.Issues, lintLabelNameCamelCase(counterOpts.ConstLabels, nil)...)
-
-	// TODO: delete me if no items below
-	result.Issues = append(result.Issues, lintCounterContainsTotal(result.MetricName)...)
 
 	return result
 }
@@ -112,7 +110,6 @@ func LintHistogram(histogramOpts prometheus.HistogramOpts) *LintResult {
 	// lint labels
 	result.Issues = append(result.Issues, lintNonSummaryNoLabelQuantile(histogramOpts.ConstLabels, nil)...)
 	result.Issues = append(result.Issues, lintLabelNameCamelCase(histogramOpts.ConstLabels, nil)...)
-
 
 	return result
 }
